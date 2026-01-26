@@ -696,20 +696,6 @@
             applyTheme();
         }
         
-        function renderStats(){
-            const total=data.cases.length;
-            const active=data.cases.filter(c=>c.status==='active'||c.status==='urgent').length;
-            const target=data.cases.reduce((s,c)=>s+c.target,0);
-            const collected=data.cases.reduce((s,c)=>s+c.collected,0);
-            
-            document.getElementById('statsGrid').innerHTML=`
-                <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${total}</div><div class="stat-label">إجمالي الحالات</div></div>
-                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${active}</div><div class="stat-label">حالات نشطة</div></div>
-                <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value">${fmt(collected)}</div><div class="stat-label">المجموع</div></div>
-                <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value">${fmt(target)}</div><div class="stat-label">الهدف</div></div>
-            `;
-        }
-        
         function renderCases(){
             const grid=document.getElementById('casesGrid');
             const empty=document.getElementById('emptyState');
