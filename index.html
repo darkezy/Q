@@ -8,25 +8,25 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: #2B7A78;
-            --secondary: #3AAFA9;
-            --accent: #DEF2F1;
-            --success: #17C3B2;
-            --danger: #E63946;
-            --text: #2C3E50;
-            --text-light: #5D6D7E;
-            --bg: #F8F9FA;
-            --card: #FFFFFF;
-            --shadow: 0 2px 8px rgba(43,122,120,0.1);
+            --primary: #7C3AED;
+            --secondary: #A78BFA;
+            --accent: #F3F4F6;
+            --success: #10B981;
+            --danger: #EF4444;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --bg: #FFFFFF;
+            --card: #FAFAFA;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         [data-theme="dark"] {
-            --primary: #3AAFA9;
-            --accent: #1F3A38;
-            --text: #E8F1F0;
-            --text-light: #B8C9C8;
-            --bg: #0F1419;
-            --card: #1A2128;
-            --shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --primary: #A78BFA;
+            --accent: #374151;
+            --text: #F9FAFB;
+            --text-light: #D1D5DB;
+            --bg: #111827;
+            --card: #1F2937;
+            --shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
         * {margin:0;padding:0;box-sizing:border-box}
         body {
@@ -36,13 +36,14 @@
             line-height:1.6;
         }
         .header {
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            background:linear-gradient(135deg,#1F2937,#374151);
             padding:15px;
             text-align:center;
             position:sticky;
             top:0;
             z-index:100;
             box-shadow:var(--shadow);
+            border-bottom:1px solid rgba(255,255,255,0.1);
         }
         .header-content {
             max-width:1200px;
@@ -69,6 +70,7 @@
             font-size:24px;
             flex-shrink:0;
             cursor:pointer;
+            box-shadow:0 2px 8px rgba(0,0,0,0.15);
         }
         .header h1 {
             color:white;
@@ -99,15 +101,16 @@
         }
         .case-card {
             background:var(--card);
-            border-radius:16px;
+            border-radius:12px;
             overflow:hidden;
             box-shadow:var(--shadow);
             margin-bottom:15px;
+            border:1px solid var(--accent);
         }
         .case-images {
             position:relative;
             height:220px;
-            background:#f0f0f0;
+            background:var(--accent);
             overflow:hidden;
         }
         .case-image {
@@ -187,14 +190,14 @@
         .remaining {color:var(--danger);font-weight:700}
         .progress-bar-container {
             height:6px;
-            background:#f0f0f0;
+            background:var(--accent);
             border-radius:6px;
             overflow:hidden;
             margin-bottom:6px;
         }
         .progress-bar {
             height:100%;
-            background:linear-gradient(90deg,var(--primary),var(--success));
+            background:linear-gradient(90deg,var(--primary),var(--secondary));
             border-radius:6px;
             position:relative;
         }
@@ -504,10 +507,12 @@
                         <div class="form-group">
                             <label class="form-label">اللون</label>
                             <select class="form-input" id="initColor">
-                                <option value="#2B7A78">أخضر</option>
-                                <option value="#E63946">أحمر</option>
-                                <option value="#457B9D">أزرق</option>
-                                <option value="#E76F51">برتقالي</option>
+                                <option value="#7C3AED">موف</option>
+                                <option value="#6B7280">رمادي</option>
+                                <option value="#1F2937">أسود</option>
+                                <option value="#A78BFA">موف فاتح</option>
+                                <option value="#EF4444">أحمر</option>
+                                <option value="#10B981">أخضر</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
@@ -1122,7 +1127,7 @@
             document.getElementById('initForm').style.display='block';
             document.getElementById('initName').value='';
             document.getElementById('initDesc').value='';
-            document.getElementById('initColor').value='#2B7A78';
+            document.getElementById('initColor').value='#7C3AED';
             editInitIdx=null;
         }
         
