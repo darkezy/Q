@@ -97,27 +97,6 @@
             margin:0 auto;
             padding:15px;
         }
-        .stats-grid {
-            display:grid;
-            grid-template-columns:repeat(2,1fr);
-            gap:10px;
-            margin-bottom:20px;
-        }
-        .stat-card {
-            background:var(--card);
-            padding:15px;
-            border-radius:12px;
-            text-align:center;
-            box-shadow:var(--shadow);
-        }
-        .stat-icon {font-size:24px;margin-bottom:8px}
-        .stat-value {
-            font-size:18px;
-            font-weight:900;
-            color:var(--primary);
-            font-family:'Cairo',sans-serif;
-        }
-        .stat-label {font-size:11px;color:var(--text-light)}
         .case-card {
             background:var(--card);
             border-radius:16px;
@@ -484,7 +463,6 @@
     </div>
 
     <div class="container">
-        <div class="stats-grid" id="statsGrid"></div>
         <div id="casesGrid"></div>
         <div id="emptyState" style="display:none;text-align:center;padding:40px">
             <div style="font-size:48px;margin-bottom:15px">📋</div>
@@ -875,7 +853,6 @@
             
             save();
             renderCases();
-            renderStats();
             
             if(receipt){
                 sendTG(receipt,name,amt,data.cases[id].title);
@@ -1254,7 +1231,6 @@
             renderInits();
             renderAllCases();
             renderCases();
-            renderStats();
             notify('تم الحفظ');
         }
         
@@ -1264,7 +1240,6 @@
             renderInits();
             renderAllCases();
             renderCases();
-            renderStats();
             notify('تم الحذف');
         }
         
@@ -1327,7 +1302,6 @@
             
             save();
             renderCases();
-            renderStats();
             notify('تم الحفظ');
         }
         
@@ -1338,7 +1312,6 @@
             data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light',botToken:'',chatId:''};
             renderInits();
             renderCases();
-            renderStats();
             renderBanks();
             closeAdminPanel();
             notify('تم الحذف');
@@ -1356,7 +1329,6 @@
         
         load();
         renderCases();
-        renderStats();
     </script>
 </body>
 </html>
