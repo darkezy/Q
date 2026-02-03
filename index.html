@@ -465,6 +465,9 @@
     </div>
 
     <div class="container">
+        <div style="background:linear-gradient(135deg,var(--success),#059669);color:white;padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;font-size:13px;box-shadow:var(--shadow)">
+            ✅ جميع البيانات محفوظة تلقائياً
+        </div>
         <div id="casesGrid"></div>
         <div id="emptyState" style="display:none;text-align:center;padding:40px">
             <div style="font-size:48px;margin-bottom:15px">📋</div>
@@ -486,6 +489,12 @@
                 <h2 style="color:var(--primary);font-family:'Cairo',sans-serif;font-size:18px">لوحة التحكم</h2>
                 <button class="btn btn-danger btn-small" onclick="closeAdminPanel()">إغلاق</button>
             </div>
+            
+            <div style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;padding:15px;border-radius:10px;margin-bottom:20px;font-size:12px">
+                <div style="font-weight:700;margin-bottom:5px;font-size:14px">💾 الحفظ التلقائي مفعّل</div>
+                <div style="opacity:0.95">جميع التغييرات (إضافة، تعديل، حذف) يتم حفظها تلقائياً في المتصفح</div>
+            </div>
+            
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="switchTab('init')">المبادرات</button>
                 <button class="admin-tab" onclick="switchTab('cases')">جميع الحالات</button>
@@ -614,6 +623,16 @@
                     <input type="text" class="form-input" id="chatId">
                 </div>
                 <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
+                <hr style="margin:20px 0">
+                <h4 style="color:var(--primary);margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
+                <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">
+                    جميع البيانات محفوظة تلقائياً في المتصفح. يمكنك تصدير نسخة احتياطية للأمان.
+                </p>
+                <div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap">
+                    <button class="btn btn-primary" onclick="exportData()" style="flex:1">📥 تصدير البيانات</button>
+                    <button class="btn btn-primary" onclick="importData()" style="flex:1;background:var(--secondary)">📤 استيراد البيانات</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display:none">
                 <hr style="margin:20px 0">
                 <button class="btn btn-danger" onclick="clearAll()">حذف جميع البيانات</button>
             </div>
@@ -1318,6 +1337,53 @@
             closeAdminPanel();
             notify('تم الحذف');
         }
+        
+        function exportData(){
+            try{
+                const dataStr=JSON.stringify(data,null,2);
+                const blob=new Blob([dataStr],{type:'application/json'});
+                const url=URL.createObjectURL(blob);
+                const a=document.createElement('a');
+                a.href=url;
+                a.download=`qatarat_backup_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                notify('تم تصدير البيانات بنجاح ✅');
+            }catch(e){
+                notify('خطأ في التصدير',1);
+            }
+        }
+        
+        function importData(){
+            document.getElementById('importFile').click();
+        }
+        
+        document.addEventListener('DOMContentLoaded',()=>{
+            document.getElementById('importFile').addEventListener('change',e=>{
+                const file=e.target.files[0];
+                if(!file)return;
+                
+                const reader=new FileReader();
+                reader.onload=e=>{
+                    try{
+                        const imported=JSON.parse(e.target.result);
+                        if(confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')){
+                            data=imported;
+                            save();
+                            renderInits();
+                            renderAllCases();
+                            renderCases();
+                            renderBanks();
+                            notify('تم استيراد البيانات بنجاح ✅');
+                        }
+                    }catch(err){
+                        notify('خطأ: الملف غير صالح',1);
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value='';
+            });
+        });
         
         function notify(msg,err=0){
             const n=document.getElementById('notification');
