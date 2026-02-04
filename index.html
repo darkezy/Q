@@ -6,6 +6,11 @@
     <title>مؤسسة قطرات الخيرية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Firebase SDK v9 compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
         :root {
             --primary: #7C3AED;
@@ -98,6 +103,30 @@
             max-width:1200px;
             margin:0 auto;
             padding:15px;
+        }
+        .sync-indicator {
+            position:fixed;
+            bottom:20px;
+            left:20px;
+            background:var(--success);
+            color:white;
+            padding:8px 12px;
+            border-radius:20px;
+            font-size:11px;
+            z-index:1000;
+            display:none;
+            align-items:center;
+            gap:6px;
+            box-shadow:var(--shadow);
+        }
+        .sync-indicator.show {
+            display:flex;
+        }
+        .sync-indicator.syncing {
+            background:var(--primary);
+        }
+        .sync-indicator.error {
+            background:var(--danger);
         }
         .case-card {
             background:var(--card);
@@ -472,6 +501,11 @@
         </div>
     </div>
 
+    <div class="sync-indicator" id="syncIndicator">
+        <span id="syncIcon">✓</span>
+        <span id="syncText">متزامن</span>
+    </div>
+
     <div class="modal" id="donationModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeDonationModal()">×</button>
@@ -488,8 +522,8 @@
             </div>
             
             <div style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;padding:15px;border-radius:10px;margin-bottom:20px;font-size:12px">
-                <div style="font-weight:700;margin-bottom:5px;font-size:14px">💾 الحفظ التلقائي مفعّل</div>
-                <div style="opacity:0.95">جميع التغييرات (إضافة، تعديل، حذف) يتم حفظها تلقائياً في المتصفح</div>
+                <div style="font-weight:700;margin-bottom:5px;font-size:14px">☁️ المزامنة السحابية مفعّلة</div>
+                <div style="opacity:0.95">جميع التغييرات تُحفظ تلقائياً في السحابة وتظهر فوراً لجميع المستخدمين</div>
             </div>
             
             <div class="admin-tabs">
@@ -594,7 +628,7 @@
                     </form>
                 </div>
                 <button class="btn btn-primary" onclick="showBankForm()" style="margin-bottom:15px">➕ إضافة حساب</button>
-                <div id="bankList"></div>
+                <div class="bank-accounts" id="bankList"></div>
             </div>
             <div id="settingsTab" class="tab-content">
                 <div class="form-group">
@@ -623,7 +657,7 @@
                 <hr style="margin:20px 0">
                 <h4 style="color:var(--primary);margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
                 <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">
-                    جميع البيانات محفوظة تلقائياً في المتصفح. يمكنك تصدير نسخة احتياطية للأمان.
+                    البيانات محفوظة في السحابة. يمكنك تصدير نسخة احتياطية للأمان.
                 </p>
                 <div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap">
                     <button class="btn btn-primary" onclick="exportData()" style="flex:1">📥 تصدير البيانات</button>
@@ -639,29 +673,155 @@
     <div class="notification" id="notification"></div>
 
     <script>
+        // Check if Firebase loaded correctly
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase SDK failed to load');
+            alert('خطأ في تحميل Firebase. يرجى التحقق من الاتصال بالإنترنت وإعادة تحميل الصفحة.');
+        }
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmXefCI3Ot0VJdxHPp-Hn52gKj4Z9ycH8",
+            authDomain: "qatarat-qat.firebaseapp.com",
+            databaseURL: "https://qatarat-qat-default-rtdb.firebaseio.com",
+            projectId: "qatarat-qat",
+            storageBucket: "qatarat-qat.firebasestorage.app",
+            messagingSenderId: "804999564837",
+            appId: "1:804999564837:web:9ac2451283411c8e6a79cc"
+        };
+
+        // Initialize Firebase with error handling
+        let database, dataRef;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            dataRef = database.ref('qataratData');
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            alert('خطأ في الاتصال بقاعدة البيانات. سيتم العمل بوضع محلي فقط.');
+        }
+
         let tg=window.Telegram?.WebApp;
         if(tg){tg.ready();tg.expand()}
         
         let data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light',botToken:'',chatId:''};
         let editInitIdx=null,editCaseIdx=null,tempImages=[];
+        let isSyncing = false;
         
         const currencies={'SDG':'ج.س','USD':'$','SAR':'ر.س','AED':'د.إ','EGP':'ج.م'};
         
-        function load(){
-            const s=localStorage.getItem('qataratData');
-            if(s)data={...data,...JSON.parse(s)};
-            applyTheme();
-            document.getElementById('currency').value=data.currency;
+        // Sync Status Indicator
+        function updateSyncStatus(status) {
+            const indicator = document.getElementById('syncIndicator');
+            if (!indicator) return;
+            
+            const icon = document.getElementById('syncIcon');
+            const text = document.getElementById('syncText');
+            
+            indicator.className = 'sync-indicator';
+            
+            // Show only when admin panel is open
+            const adminPanel = document.getElementById('adminPanel');
+            if (adminPanel && adminPanel.classList.contains('active')) {
+                indicator.classList.add('show');
+            }
+            
+            if (status === 'syncing') {
+                indicator.style.background = 'var(--primary)';
+                icon.textContent = '↻';
+                text.textContent = 'جاري المزامنة...';
+            } else if (status === 'synced') {
+                indicator.style.background = 'var(--success)';
+                icon.textContent = '✓';
+                text.textContent = 'متزامن';
+            } else if (status === 'error') {
+                indicator.style.background = 'var(--danger)';
+                icon.textContent = '✗';
+                text.textContent = 'خطأ في المزامنة';
+            }
         }
         
-        function save(){
-            try{
-                localStorage.setItem('qataratData',JSON.stringify(data));
-                return true;
-            }catch(e){
-                notify('خطأ في الحفظ',1);
-                return false;
+        // Load data from Firebase
+        function loadFromFirebase() {
+            if (!dataRef) {
+                console.warn('Firebase not available, using local storage');
+                const stored = localStorage.getItem('qataratData');
+                if (stored) {
+                    data = { ...data, ...JSON.parse(stored) };
+                    renderCases();
+                }
+                return;
             }
+            
+            updateSyncStatus('syncing');
+            dataRef.once('value').then(snapshot => {
+                const firebaseData = snapshot.val();
+                if (firebaseData) {
+                    data = { ...data, ...firebaseData };
+                    renderCases();
+                    renderInits();
+                    renderAllCases();
+                    renderBanks();
+                    applyTheme();
+                    if (document.getElementById('currency')) {
+                        document.getElementById('currency').value = data.currency;
+                    }
+                }
+                updateSyncStatus('synced');
+            }).catch(error => {
+                console.error('Firebase load error:', error);
+                updateSyncStatus('error');
+                notify('خطأ في تحميل البيانات', 1);
+            });
+        }
+        
+        // Listen to Firebase changes in real-time
+        function listenToFirebase() {
+            if (!dataRef) return;
+            
+            dataRef.on('value', snapshot => {
+                if (isSyncing) return; // Don't update while we're syncing
+                
+                const firebaseData = snapshot.val();
+                if (firebaseData) {
+                    data = { ...data, ...firebaseData };
+                    renderCases();
+                    renderInits();
+                    renderAllCases();
+                    renderBanks();
+                    applyTheme();
+                }
+            });
+        }
+        
+        // Save data to Firebase
+        function saveToFirebase() {
+            // Fallback to localStorage if Firebase not available
+            if (!dataRef) {
+                try {
+                    localStorage.setItem('qataratData', JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    notify('خطأ في الحفظ', 1);
+                    return false;
+                }
+            }
+            
+            isSyncing = true;
+            updateSyncStatus('syncing');
+            
+            dataRef.set(data).then(() => {
+                updateSyncStatus('synced');
+                isSyncing = false;
+                return true;
+            }).catch(error => {
+                console.error('Firebase save error:', error);
+                updateSyncStatus('error');
+                notify('خطأ في الحفظ', 1);
+                isSyncing = false;
+                return false;
+            });
         }
         
         function fmt(n){
@@ -680,7 +840,7 @@
         
         function toggleTheme(){
             data.theme=data.theme==='light'?'dark':'light';
-            save();
+            saveToFirebase();
             applyTheme();
         }
         
@@ -860,7 +1020,7 @@
                 data.cases[id].status='completed';
             }
             
-            save();
+            saveToFirebase();
             renderCases();
             
             if(receipt){
@@ -938,12 +1098,6 @@
         
         let tap=0,timer;
         document.addEventListener('DOMContentLoaded',()=>{
-            const url=new URLSearchParams(window.location.search);
-            if(url.get('admin')==='true'){
-                adminLogin();
-                window.history.replaceState({},'',window.location.pathname);
-            }
-            
             document.querySelector('.logo').addEventListener('click',()=>{
                 tap++;
                 clearTimeout(timer);
@@ -952,6 +1106,31 @@
                     adminLogin();
                     tap=0;
                 }
+            });
+            
+            document.getElementById('importFile').addEventListener('change',e=>{
+                const file=e.target.files[0];
+                if(!file)return;
+                
+                const reader=new FileReader();
+                reader.onload=e=>{
+                    try{
+                        const imported=JSON.parse(e.target.result);
+                        if(confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')){
+                            data=imported;
+                            saveToFirebase();
+                            renderInits();
+                            renderAllCases();
+                            renderCases();
+                            renderBanks();
+                            notify('تم استيراد البيانات بنجاح ✅');
+                        }
+                    }catch(err){
+                        notify('خطأ: الملف غير صالح',1);
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value='';
             });
         });
         
@@ -966,6 +1145,7 @@
         
         function openAdmin(){
             document.getElementById('adminPanel').classList.add('active');
+            document.getElementById('syncIndicator').classList.add('show');
             renderInits();
             renderAllCases();
             renderBanks();
@@ -975,6 +1155,7 @@
         
         function closeAdminPanel(){
             document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('syncIndicator').classList.remove('show');
         }
         
         function switchTab(t){
@@ -986,6 +1167,8 @@
         
         function renderInits(){
             const list=document.getElementById('initList');
+            if(!list)return;
+            
             if(data.initiatives.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px">لا توجد مبادرات</p>';
                 return;
@@ -1026,12 +1209,13 @@
         
         function renderAllCases(){
             const list=document.getElementById('allCasesList');
+            if(!list)return;
+            
             if(data.cases.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px;color:var(--text-light)">لا توجد حالات</p>';
                 return;
             }
             
-            // تجميع الحالات حسب الحالة
             const completed=data.cases.filter(c=>c.status==='completed');
             const urgent=data.cases.filter(c=>c.status==='urgent');
             const active=data.cases.filter(c=>c.status==='active');
@@ -1039,7 +1223,6 @@
             
             let html='';
             
-            // حالات خارج المبادرات
             if(unassigned.length>0){
                 html+=`<div style="margin-bottom:25px">
                     <h4 style="font-size:15px;margin-bottom:12px;color:var(--danger);display:flex;align-items:center;gap:8px">
@@ -1053,7 +1236,6 @@
                 </div>`;
             }
             
-            // حالات عاجلة
             if(urgent.length>0){
                 html+=`<div style="margin-bottom:25px">
                     <h4 style="font-size:15px;margin-bottom:12px;color:#EF4444;display:flex;align-items:center;gap:8px">
@@ -1067,7 +1249,6 @@
                 </div>`;
             }
             
-            // حالات نشطة
             if(active.length>0){
                 html+=`<div style="margin-bottom:25px">
                     <h4 style="font-size:15px;margin-bottom:12px;color:#3B82F6;display:flex;align-items:center;gap:8px">
@@ -1081,7 +1262,6 @@
                 </div>`;
             }
             
-            // حالات مكتملة
             if(completed.length>0){
                 html+=`<div style="margin-bottom:25px">
                     <h4 style="font-size:15px;margin-bottom:12px;color:#10B981;display:flex;align-items:center;gap:8px">
@@ -1171,7 +1351,7 @@
                 data.initiatives.push(init);
             }
             
-            save();
+            saveToFirebase();
             document.getElementById('initForm').style.display='none';
             renderInits();
             renderCases();
@@ -1182,7 +1362,7 @@
             if(!confirm('حذف المبادرة؟'))return;
             data.initiatives.splice(i,1);
             data.cases.forEach(c=>{if(c.initId>i)c.initId--});
-            save();
+            saveToFirebase();
             renderInits();
             renderCases();
             notify('تم الحذف');
@@ -1244,7 +1424,7 @@
                 data.cases.push(c);
             }
             
-            save();
+            saveToFirebase();
             document.getElementById('caseForm').style.display='none';
             renderInits();
             renderAllCases();
@@ -1254,7 +1434,7 @@
         
         function delCase(i){
             data.cases.splice(i,1);
-            save();
+            saveToFirebase();
             renderInits();
             renderAllCases();
             renderCases();
@@ -1263,6 +1443,8 @@
         
         function renderBanks(){
             const list=document.getElementById('bankList');
+            if(!list)return;
+            
             if(data.banks.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px">لا توجد حسابات</p>';
                 return;
@@ -1295,7 +1477,7 @@
                 owner:document.getElementById('bankOwner').value,
                 iban:document.getElementById('bankIban').value
             });
-            save();
+            saveToFirebase();
             document.getElementById('bankForm').style.display='none';
             renderBanks();
             notify('تم الحفظ');
@@ -1304,7 +1486,7 @@
         function delBank(i){
             if(!confirm('حذف الحساب؟'))return;
             data.banks.splice(i,1);
-            save();
+            saveToFirebase();
             renderBanks();
             notify('تم الحذف');
         }
@@ -1318,7 +1500,7 @@
             data.botToken=document.getElementById('botToken').value.trim();
             data.chatId=document.getElementById('chatId').value.trim();
             
-            save();
+            saveToFirebase();
             renderCases();
             notify('تم الحفظ');
         }
@@ -1326,8 +1508,8 @@
         function clearAll(){
             if(!confirm('حذف كل شيء؟'))return;
             if(!confirm('تأكيد نهائي؟'))return;
-            localStorage.removeItem('qataratData');
             data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light',botToken:'',chatId:''};
+            saveToFirebase();
             renderInits();
             renderCases();
             renderBanks();
@@ -1355,33 +1537,6 @@
             document.getElementById('importFile').click();
         }
         
-        document.addEventListener('DOMContentLoaded',()=>{
-            document.getElementById('importFile').addEventListener('change',e=>{
-                const file=e.target.files[0];
-                if(!file)return;
-                
-                const reader=new FileReader();
-                reader.onload=e=>{
-                    try{
-                        const imported=JSON.parse(e.target.result);
-                        if(confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')){
-                            data=imported;
-                            save();
-                            renderInits();
-                            renderAllCases();
-                            renderCases();
-                            renderBanks();
-                            notify('تم استيراد البيانات بنجاح ✅');
-                        }
-                    }catch(err){
-                        notify('خطأ: الملف غير صالح',1);
-                    }
-                };
-                reader.readAsText(file);
-                e.target.value='';
-            });
-        });
-        
         function notify(msg,err=0){
             const n=document.getElementById('notification');
             n.textContent=msg;
@@ -1392,7 +1547,9 @@
         
         document.getElementById('themeToggle').addEventListener('click',toggleTheme);
         
-        load();
+        // Initialize app
+        loadFromFirebase();
+        listenToFirebase();
         renderCases();
     </script>
 </body>
