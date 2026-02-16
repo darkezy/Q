@@ -4,489 +4,732 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>مؤسسة قطرات الخيرية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
         :root {
-            /* لوحة ألوان خيرية هادئة (درجات الأخضر المريح والبيج الدافئ) */
-            --primary: #2D5A27;
-            --secondary: #5B8E7D;
-            --accent: #F4F1EA;
-            --success: #689F38;
-            --danger: #BC4749;
-            --text: #2C3531;
-            --text-light: #6D7275;
-            --bg: #FCFBF7;
-            --card: #FFFFFF;
-            --shadow: 0 4px 12px rgba(45, 90, 39, 0.08);
+            /* نظام ألوان Cloudflare - الوضع النهاري */
+            --bg: #FFFFFF;
+            --surface: #FAFAFA;
+            --text: #1F2937;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            
+            /* ألوان المبادرات - Cloudflare Style */
+            --green: #10B981;
+            --orange: #F59E0B;
+            --blue: #3B82F6;
+            --yellow: #EAB308;
+            --red: #DC2626;
+            --purple: #8B5CF6;
+            
+            /* حالات النظام */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #DC2626;
         }
+        
         [data-theme="dark"] {
-            --primary: #8EB69B;
-            --accent: #2D3A30;
-            --text: #F1F7ED;
-            --text-light: #B2C2B9;
-            --bg: #1B241D;
-            --card: #252F27;
-            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            /* نظام ألوان Cloudflare - الوضع الليلي */
+            --bg: #111827;
+            --surface: #1F2937;
+            --text: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --border: #374151;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            
+            /* ألوان المبادرات تظل كما هي */
+            --green: #10B981;
+            --orange: #F59E0B;
+            --blue: #3B82F6;
+            --yellow: #EAB308;
+            --red: #DC2626;
+            --purple: #8B5CF6;
         }
-        * {margin:0;padding:0;box-sizing:border-box}
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family:'Tajawal',sans-serif;
-            background:var(--bg);
-            color:var(--text);
-            line-height:1.6;
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
+        
         .header {
-            background: linear-gradient(135deg, #2D5A27, #467141);
-            padding:15px;
-            text-align:center;
-            position:sticky;
-            top:0;
-            z-index:100;
-            box-shadow:var(--shadow);
-            border-bottom:2px solid rgba(255,255,255,0.05);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
         }
+        
         .header-content {
-            max-width:1200px;
-            margin:0 auto;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
-            flex-wrap:wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
+        
         .logo-section {
-            display:flex;
-            align-items:center;
-            gap:12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
+        
         .logo {
-            width:45px;
-            height:45px;
-            background:white;
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:24px;
-            flex-shrink:0;
-            cursor:pointer;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-size: 20px;
         }
-        .header h1 {
-            color:white;
-            font-size:16px;
-            font-weight:900;
-            font-family:'Cairo',sans-serif;
+        
+        .logo:active {
+            transform: scale(0.95);
         }
-        .header p {
-            color: #E8F5E9;
-            font-size:11px;
-            opacity: 0.9;
+        
+        .header-text h1 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
         }
-        .icon-btn {
-            width:40px;
-            height:40px;
-            border-radius:50%;
-            background:rgba(255,255,255,0.15);
-            border:none;
-            color:white;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            transition: 0.3s;
+        
+        .header-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
-        .icon-btn:hover {
-            background:rgba(255,255,255,0.25);
+        
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 16px;
         }
+        
+        .theme-toggle:hover {
+            background: var(--bg);
+            border-color: var(--text-secondary);
+        }
+        
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+        
         .container {
-            max-width:1200px;
-            margin:0 auto;
-            padding:15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
         }
+        
         .sync-indicator {
-            position:fixed;
-            bottom:20px;
-            left:20px;
-            background:var(--success);
-            color:white;
-            padding:8px 12px;
-            border-radius:20px;
-            font-size:11px;
-            z-index:1000;
-            display:none;
-            align-items:center;
-            gap:6px;
-            box-shadow:var(--shadow);
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow);
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        
         .sync-indicator.show {
-            display:flex;
+            display: flex;
             opacity: 1;
             visibility: visible;
         }
+        
         .case-card {
-            background:var(--card);
-            border-radius:12px;
-            overflow:hidden;
-            box-shadow:var(--shadow);
-            margin-bottom:15px;
-            border:1px solid rgba(45, 90, 39, 0.05);
-            transition: transform 0.3s;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            transition: border-color 0.2s ease;
         }
+        
         .case-card:hover {
-            transform: translateY(-3px);
+            border-color: var(--text-secondary);
         }
+        
         .case-images {
-            position:relative;
-            height:220px;
-            background:#E0E5DF;
-            overflow:hidden;
+            position: relative;
+            height: 240px;
+            background: var(--surface);
+            overflow: hidden;
         }
+        
         .case-image {
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
         }
-        .case-image.active {display:block}
+        
+        .case-image.active {
+            display: block;
+        }
+        
         .image-nav {
-            position:absolute;
-            top:50%;
-            transform:translateY(-50%);
-            background:rgba(0,0,0,0.5);
-            color:white;
-            border:none;
-            width:32px;
-            height:32px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
         }
-        .image-nav.prev {left:8px}
-        .image-nav.next {right:8px}
+        
+        .image-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .image-nav.prev { left: 8px; }
+        .image-nav.next { right: 8px; }
+        
         .indicators {
-            position:absolute;
-            bottom:8px;
-            left:50%;
-            transform:translateX(-50%);
-            display:flex;
-            gap:5px;
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
         }
+        
         .indicator {
-            width:6px;
-            height:6px;
-            border-radius:50%;
-            background:rgba(255,255,255,0.5);
-            cursor:pointer;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        
         .indicator.active {
-            background:white;
-            width:20px;
-            border-radius:3px;
+            background: white;
+            width: 20px;
+            border-radius: 3px;
         }
-        .case-content {padding:15px}
+        
+        .case-content {
+            padding: 20px;
+        }
+        
         .case-status {
-            display:inline-block;
-            font-size:11px;
-            font-weight:600;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
-        .case-status.active {color:#5B8E7D}
-        .case-status.urgent {color:#BC4749}
-        .case-status.completed {color:#2D5A27}
+        
+        .case-status.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue);
+        }
+        
+        .case-status.urgent {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--red);
+        }
+        
+        .case-status.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+        }
+        
+        .case-status.closed {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--text-secondary);
+        }
+        
         .case-title {
-            font-size:17px;
-            font-weight:700;
-            margin:10px 0;
-            font-family:'Cairo',sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text);
+            margin-bottom: 8px;
         }
+        
         .case-description {
-            font-size:13px;
-            color:var(--text-light);
-            margin-bottom:15px;
-            max-height:50px;
-            overflow:hidden;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
         }
+        
         .progress-info {
-            display:flex;
-            justify-content:space-between;
-            margin-bottom:8px;
-            font-size:12px;
-            flex-wrap:wrap;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
         }
-        .collected {color:var(--success);font-weight:700}
-        .remaining {color:var(--danger);font-weight:700}
+        
+        .collected {
+            color: var(--green);
+            font-weight: 600;
+        }
+        
+        .remaining {
+            color: var(--text-secondary);
+        }
+        
         .progress-bar-container {
-            height:8px;
-            background:#EDF1EE;
-            border-radius:6px;
-            overflow:hidden;
-            margin-bottom:6px;
+            height: 6px;
+            background: var(--surface);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 16px;
         }
+        
         .progress-bar {
-            height:100%;
-            background:linear-gradient(90deg, #2D5A27, #689F38);
-            border-radius:6px;
-            position:relative;
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
         }
+        
         .btn {
-            width:100%;
-            padding:12px;
-            border:none;
-            border-radius:10px;
-            font-family:'Tajawal',sans-serif;
-            font-weight:700;
-            cursor:pointer;
-            font-size:13px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:6px;
-            transition: 0.3s;
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
         .btn-primary {
-            background: linear-gradient(135deg, #2D5A27, #5B8E7D);
-            color:white;
+            background: var(--text);
+            color: var(--bg);
         }
+        
         .btn-primary:hover {
-            filter: brightness(1.1);
-            box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
+            opacity: 0.9;
         }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
         .btn-danger {
-            background:var(--danger);
-            color:white;
+            background: var(--red);
+            color: white;
         }
-        .btn-small {padding:8px 12px;font-size:11px;width:auto}
+        
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+        }
+        
         .modal {
-            display:none;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.9);
-            z-index:1000;
-            padding:10px;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            padding: 16px;
         }
+        
         .modal.active {
-            display:flex;
-            align-items:center;
-            justify-content:center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        
         .modal-content {
-            background:var(--card);
-            border-radius:16px;
-            padding:20px;
-            max-width:500px;
-            width:100%;
-            max-height:90vh;
-            overflow-y:auto;
-            position:relative;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
+        
         .modal-close {
-            position:absolute;
-            top:12px;
-            left:12px;
-            background:var(--danger);
-            color:white;
-            border:none;
-            width:32px;
-            height:32px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:18px;
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
         }
+        
+        .modal-close:hover {
+            background: var(--border);
+        }
+        
         .modal-title {
-            font-size:18px;
-            font-weight:700;
-            margin-bottom:15px;
-            color:var(--primary);
-            font-family:'Cairo',sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text);
+            margin-bottom: 20px;
         }
-        .form-group {margin-bottom:15px}
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
         .form-label {
-            display:block;
-            margin-bottom:6px;
-            font-weight:600;
-            font-size:13px;
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
         }
-        .form-input,.form-textarea {
-            width:100%;
-            padding:10px;
-            border:2px solid var(--accent);
-            border-radius:10px;
-            font-family:'Tajawal',sans-serif;
-            font-size:13px;
-            background:var(--bg);
-            color:var(--text);
+        
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s ease;
         }
-        .form-input:focus,.form-textarea:focus {
-            outline:none;
-            border-color:var(--primary);
+        
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--text);
         }
+        
         .form-textarea {
-            resize:vertical;
-            min-height:80px;
+            resize: vertical;
+            min-height: 80px;
         }
+        
         .file-upload {
-            border:2px dashed var(--accent);
-            border-radius:10px;
-            padding:20px;
-            text-align:center;
-            cursor:pointer;
-            background:var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--surface);
+            transition: border-color 0.2s ease;
         }
-        .file-input {display:none}
+        
+        .file-upload:hover {
+            border-color: var(--text-secondary);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
         .preview-images {
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
-            gap:8px;
-            margin-top:12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
         }
+        
         .preview-image {
-            position:relative;
-            aspect-ratio:1;
-            border-radius:8px;
-            overflow:hidden;
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
+        
         .preview-image img {
-            width:100%;
-            height:100%;
-            object-fit:cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+        
         .preview-remove {
-            position:absolute;
-            top:4px;
-            right:4px;
-            background:var(--danger);
-            color:white;
-            border:none;
-            width:22px;
-            height:22px;
-            border-radius:50%;
-            cursor:pointer;
-            font-size:13px;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--red);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        
         .admin-panel {
-            display:none;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.9);
-            z-index:1500;
-            overflow-y:auto;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 1500;
+            overflow-y: auto;
         }
-        .admin-panel.active {display:block}
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
         .admin-content {
-            background:var(--card);
-            max-width:900px;
-            margin:20px auto;
-            border-radius:16px;
-            padding:20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
         }
+        
         .admin-header {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:20px;
-            padding-bottom:15px;
-            border-bottom:2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
         }
+        
+        .admin-header h2 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
         .admin-tabs {
-            display:flex;
-            gap:8px;
-            margin-bottom:20px;
-            flex-wrap:wrap;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
         }
+        
         .admin-tab {
-            padding:10px 18px;
-            background:var(--accent);
-            border:none;
-            border-radius:10px;
-            font-family:'Tajawal',sans-serif;
-            font-weight:600;
-            cursor:pointer;
-            font-size:13px;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
+        
+        .admin-tab:hover {
+            color: var(--text);
+        }
+        
         .admin-tab.active {
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
-            color:white;
+            color: var(--text);
+            border-bottom-color: var(--text);
         }
-        .tab-content {display:none}
-        .tab-content.active {display:block}
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .bank-account {
-            background:var(--bg);
-            padding:15px;
-            border-radius:10px;
-            margin-bottom:12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
+        
         .bank-info-item {
-            display:flex;
-            justify-content:space-between;
-            padding:6px 0;
-            border-bottom:1px solid var(--accent);
-            font-size:13px;
-            flex-wrap:wrap;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
         }
-        .bank-info-label {font-weight:600;color:var(--text-light)}
+        
+        .bank-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .bank-info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
         .bank-info-value {
-            font-weight:700;
-            color:var(--primary);
-            word-break:break-all;
+            font-weight: 600;
+            color: var(--text);
+            word-break: break-all;
         }
+        
         .notification {
-            position:fixed;
-            top:80px;
-            right:15px;
-            background:var(--success);
-            color:white;
-            padding:12px 18px;
-            border-radius:10px;
-            z-index:3000;
-            transform:translateX(400px);
-            transition:transform 0.3s;
-            font-size:13px;
-            max-width:calc(100% - 30px);
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            font-size: 14px;
+            max-width: calc(100% - 40px);
         }
-        .notification.show {transform:translateX(0)}
-        .notification.error {background:var(--danger)}
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .notification.error {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
         .initiative-header {
-            display:flex;
-            align-items:center;
-            gap:15px;
-            padding:20px;
-            background:var(--primary);
-            margin-bottom:15px;
-            border-radius:16px 16px 0 0;
-            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+            border: 1px solid;
+            border-bottom: none;
         }
+        
         .initiative-title {
-            color:white;
-            font-family:'Cairo',sans-serif;
-            font-size:20px;
-            font-weight:900;
-            margin-bottom:5px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: white;
         }
+        
         .initiative-desc {
-            color:rgba(255,255,255,0.95);
-            font-size:13px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
         }
-        @media (max-width:768px) {
-            .header {padding:12px}
-            .header h1 {font-size:15px}
-            .logo {width:40px;height:40px;font-size:20px}
-            .container {padding:12px}
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        /* ألوان المبادرات */
+        .color-green { background-color: var(--green); border-color: var(--green); }
+        .color-orange { background-color: var(--orange); border-color: var(--orange); }
+        .color-blue { background-color: var(--blue); border-color: var(--blue); }
+        .color-yellow { background-color: var(--yellow); border-color: var(--yellow); }
+        .color-red { background-color: var(--red); border-color: var(--red); }
+        .color-purple { background-color: var(--purple); border-color: var(--purple); }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px;
+            }
+            
+            .header-text h1 {
+                font-size: 16px;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .case-images {
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -500,14 +743,14 @@
                     <p>كل قطرة تصنع فرقاً</p>
                 </div>
             </div>
-            <button class="icon-btn" id="themeToggle">🌙</button>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
         </div>
     </div>
 
     <div class="container">
         <div id="casesGrid"></div>
-        <div id="emptyState" style="display:none;text-align:center;padding:40px">
-            <div style="font-size:48px;margin-bottom:15px">📋</div>
+        <div id="emptyState" class="empty-state" style="display:none">
+            <div class="empty-state-icon">📋</div>
             <h3>لا توجد حالات حالياً</h3>
         </div>
     </div>
@@ -528,24 +771,20 @@
     <div class="admin-panel" id="adminPanel">
         <div class="admin-content">
             <div class="admin-header">
-                <h2 style="color:var(--primary);font-family:'Cairo',sans-serif;font-size:18px">لوحة التحكم</h2>
+                <h2>لوحة التحكم</h2>
                 <button class="btn btn-danger btn-small" onclick="closeAdminPanel()">إغلاق</button>
-            </div>
-            
-            <div style="background:linear-gradient(135deg,#2D5A27,#5B8E7D);color:white;padding:15px;border-radius:10px;margin-bottom:20px;font-size:12px">
-                <div style="font-weight:700;margin-bottom:5px;font-size:14px">☁️ المزامنة السحابية مفعّلة</div>
-                <div style="opacity:0.95">جميع التغييرات تُحفظ تلقائياً في السحابة وتظهر فوراً لجميع المستخدمين</div>
             </div>
             
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="switchTab('init')">المبادرات</button>
                 <button class="admin-tab" onclick="switchTab('cases')">جميع الحالات</button>
-                <button class="admin-tab" onclick="switchTab('bank')">الحسابات</button>
+                <button class="admin-tab" onclick="switchTab('bank')">الحسابات البنكية</button>
                 <button class="admin-tab" onclick="switchTab('settings')">الإعدادات</button>
             </div>
+            
             <div id="initTab" class="tab-content active">
-                <div id="initForm" style="display:none;margin-bottom:20px;padding:15px;background:var(--bg);border-radius:12px">
-                    <h3 style="margin-bottom:15px">إضافة مبادرة</h3>
+                <div id="initForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <h3 style="margin-bottom:16px;font-size:16px">إضافة مبادرة</h3>
                     <form onsubmit="saveInitiative(event)">
                         <div class="form-group">
                             <label class="form-label">اسم المبادرة *</label>
@@ -557,20 +796,21 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">اللون</label>
-                            <select class="form-input" id="initColor">
-                                <option value="#2D5A27">أخضر غامق</option>
-                                <option value="#5B8E7D">أخضر مزرق</option>
-                                <option value="#689F38">أخضر فاتح</option>
-                                <option value="#6B7280">رمادي</option>
-                                <option value="#BC4749">أحمر</option>
-                                <option value="#1F2937">أسود</option>
+                            <select class="form-select" id="initColor">
+                                <option value="#10B981">🟢 أخضر هادئ</option>
+                                <option value="#F59E0B">🟠 برتقالي هادئ</option>
+                                <option value="#3B82F6">🔵 سماوي هادئ</option>
+                                <option value="#EAB308">🟡 أصفر هادئ</option>
+                                <option value="#DC2626">🔴 أحمر داكن</option>
+                                <option value="#8B5CF6">🟣 موف هادئ</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
                     </form>
                 </div>
-                <div id="caseForm" style="display:none;margin-bottom:20px;padding:15px;background:var(--bg);border-radius:12px">
-                    <h3 style="margin-bottom:15px" id="caseFormTitle">إضافة حالة</h3>
+                
+                <div id="caseForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <h3 style="margin-bottom:16px;font-size:16px" id="caseFormTitle">إضافة حالة</h3>
                     <form onsubmit="saveCase(event)">
                         <div class="form-group">
                             <label class="form-label">عنوان الحالة *</label>
@@ -590,7 +830,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">الحالة</label>
-                            <select class="form-input" id="caseStatus">
+                            <select class="form-select" id="caseStatus">
                                 <option value="active">نشطة</option>
                                 <option value="urgent">عاجلة</option>
                                 <option value="completed">مكتملة</option>
@@ -608,16 +848,19 @@
                         <button type="submit" class="btn btn-primary">حفظ</button>
                     </form>
                 </div>
-                <button class="btn btn-primary" onclick="showInitForm()" style="margin-bottom:15px">➕ إضافة مبادرة</button>
+                
+                <button class="btn btn-primary" onclick="showInitForm()" style="margin-bottom:16px">+ إضافة مبادرة</button>
                 <div id="initList"></div>
             </div>
+            
             <div id="casesTab" class="tab-content">
-                <h3 style="margin-bottom:15px;font-size:16px;color:var(--primary)">جميع الحالات</h3>
+                <h3 style="margin-bottom:16px;font-size:16px">جميع الحالات</h3>
                 <div id="allCasesList"></div>
             </div>
+            
             <div id="bankTab" class="tab-content">
-                <div id="bankForm" style="display:none;margin-bottom:20px;padding:15px;background:var(--bg);border-radius:12px">
-                    <h3 style="margin-bottom:15px">إضافة حساب بنكي</h3>
+                <div id="bankForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <h3 style="margin-bottom:16px;font-size:16px">إضافة حساب بنكي</h3>
                     <form onsubmit="saveBank(event)">
                         <div class="form-group">
                             <label class="form-label">اسم البنك *</label>
@@ -638,13 +881,14 @@
                         <button type="submit" class="btn btn-primary">حفظ</button>
                     </form>
                 </div>
-                <button class="btn btn-primary" onclick="showBankForm()" style="margin-bottom:15px">➕ إضافة حساب</button>
-                <div class="bank-accounts" id="bankList"></div>
+                <button class="btn btn-primary" onclick="showBankForm()" style="margin-bottom:16px">+ إضافة حساب</button>
+                <div id="bankList"></div>
             </div>
+            
             <div id="settingsTab" class="tab-content">
                 <div class="form-group">
                     <label class="form-label">العملة</label>
-                    <select class="form-input" id="currency">
+                    <select class="form-select" id="currency">
                         <option value="SDG">جنيه سوداني (ج.س)</option>
                         <option value="USD">دولار ($)</option>
                         <option value="SAR">ريال (ر.س)</option>
@@ -657,17 +901,21 @@
                     <input type="password" class="form-input" id="adminPass">
                 </div>
                 <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
-                <hr style="margin:20px 0">
-                <h4 style="color:var(--primary);margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
-                <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">
+                
+                <hr style="margin:24px 0;border:none;border-top:1px solid var(--border)">
+                
+                <h4 style="margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
                     البيانات محفوظة في السحابة. يمكنك تصدير نسخة احتياطية للأمان.
                 </p>
-                <div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap">
-                    <button class="btn btn-primary" onclick="exportData()" style="flex:1">📥 تصدير البيانات</button>
-                    <button class="btn btn-primary" onclick="importData()" style="flex:1;background:var(--secondary)">📤 استيراد البيانات</button>
+                <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                    <button class="btn btn-secondary" onclick="exportData()" style="flex:1">📥 تصدير</button>
+                    <button class="btn btn-secondary" onclick="importData()" style="flex:1">📤 استيراد</button>
                 </div>
                 <input type="file" id="importFile" accept=".json" style="display:none">
-                <hr style="margin:20px 0">
+                
+                <hr style="margin:24px 0;border:none;border-top:1px solid var(--border)">
+                
                 <button class="btn btn-danger" onclick="clearAll()">حذف جميع البيانات</button>
             </div>
         </div>
@@ -676,19 +924,42 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // ⚙️ إعدادات Worker API - ضع رابط Worker هنا
         const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
         
-        let tg=window.Telegram?.WebApp;
-        if(tg){tg.ready();tg.expand()}
+        let tg = window.Telegram?.WebApp;
+        if(tg) { tg.ready(); tg.expand(); }
         
-        let data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light'};
-        let editInitIdx=null,editCaseIdx=null,tempImages=[];
+        let data = {
+            initiatives: [],
+            cases: [],
+            banks: [],
+            password: 'admin123',
+            currency: 'SDG',
+            theme: 'light'
+        };
+        
+        let editInitIdx = null;
+        let editCaseIdx = null;
+        let tempImages = [];
         let isSyncing = false;
         
-        const currencies={'SDG':'ج.س','USD':'$','SAR':'ر.س','AED':'د.إ','EGP':'ج.م'};
+        const currencies = {
+            'SDG': 'ج.س',
+            'USD': '$',
+            'SAR': 'ر.س',
+            'AED': 'د.إ',
+            'EGP': 'ج.م'
+        };
         
-        // Sync Status Indicator
+        const colorClasses = {
+            '#10B981': 'green',
+            '#F59E0B': 'orange',
+            '#3B82F6': 'blue',
+            '#EAB308': 'yellow',
+            '#DC2626': 'red',
+            '#8B5CF6': 'purple'
+        };
+        
         function updateSyncStatus(status) {
             const indicator = document.getElementById('syncIndicator');
             if (!indicator) return;
@@ -702,36 +973,25 @@
             const isAdminOpen = adminPanel && adminPanel.classList.contains('active');
             
             if (status === 'syncing') {
-                indicator.style.background = 'var(--primary)';
                 icon.textContent = '↻';
                 text.textContent = 'جاري المزامنة...';
-                if (isAdminOpen) {
-                    indicator.classList.add('show');
-                }
+                if (isAdminOpen) indicator.classList.add('show');
             } else if (status === 'synced') {
-                indicator.style.background = 'var(--success)';
                 icon.textContent = '✓';
                 text.textContent = 'متزامن';
                 if (isAdminOpen) {
                     indicator.classList.add('show');
-                    setTimeout(() => {
-                        indicator.classList.remove('show');
-                    }, 2000);
+                    setTimeout(() => indicator.classList.remove('show'), 2000);
                 }
             } else if (status === 'error') {
-                indicator.style.background = 'var(--danger)';
                 icon.textContent = '✗';
                 text.textContent = 'خطأ في المزامنة';
-                if (isAdminOpen) {
-                    indicator.classList.add('show');
-                }
+                if (isAdminOpen) indicator.classList.add('show');
             }
         }
         
-        // Load data from Worker API
         async function loadFromWorker() {
             if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) {
-                console.warn('Worker URL not configured');
                 const stored = localStorage.getItem('qataratData');
                 if (stored) {
                     data = { ...data, ...JSON.parse(stored) };
@@ -772,7 +1032,6 @@
             }
         }
         
-        // Save data to Worker API
         async function saveToWorker() {
             try {
                 localStorage.setItem('qataratData', JSON.stringify(data));
@@ -781,7 +1040,6 @@
             }
             
             if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) {
-                console.warn('Worker URL not configured, data saved locally only');
                 return true;
             }
             
@@ -791,9 +1049,7 @@
             try {
                 const response = await fetch(`${WORKER_API_URL}/data`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
@@ -810,16 +1066,13 @@
             }
         }
         
-        // Send Telegram notification
         async function sendTelegramNotification(message, image = null) {
             if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) return;
             
             try {
                 await fetch(`${WORKER_API_URL}/notify`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message, image })
                 });
             } catch (error) {
@@ -827,143 +1080,187 @@
             }
         }
         
-        function fmt(n){
-            return new Intl.NumberFormat('ar-SD').format(n)+' '+currencies[data.currency];
+        function fmt(n) {
+            return new Intl.NumberFormat('ar-SD').format(n) + ' ' + currencies[data.currency];
         }
         
-        function applyTheme(){
-            if(data.theme==='dark'){
-                document.documentElement.setAttribute('data-theme','dark');
-                document.getElementById('themeToggle').textContent='☀️';
-            }else{
+        function applyTheme() {
+            if (data.theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').textContent = '☀️';
+            } else {
                 document.documentElement.removeAttribute('data-theme');
-                document.getElementById('themeToggle').textContent='🌙';
+                document.getElementById('themeToggle').textContent = '🌙';
             }
         }
         
-        function toggleTheme(){
-            data.theme=data.theme==='light'?'dark':'light';
+        function toggleTheme() {
+            data.theme = data.theme === 'light' ? 'dark' : 'light';
             saveToWorker();
             applyTheme();
         }
         
-        function renderCases(){
-            const grid=document.getElementById('casesGrid');
-            const empty=document.getElementById('emptyState');
+        function isCaseClosed(c) {
+            return c.collected >= c.target;
+        }
+        
+        function renderCases() {
+            const grid = document.getElementById('casesGrid');
+            const empty = document.getElementById('emptyState');
             
-            if(!data.cases || data.cases.length===0){
-                grid.innerHTML='';
-                empty.style.display='block';
+            if (!data.cases || data.cases.length === 0) {
+                grid.innerHTML = '';
+                empty.style.display = 'block';
                 return;
             }
             
-            empty.style.display='none';
-            const byInit={};
-            data.cases.forEach((c,i)=>{
-                const id=c.initId!==undefined?c.initId:'none';
-                if(!byInit[id])byInit[id]=[];
-                byInit[id].push({...c,idx:i});
+            empty.style.display = 'none';
+            const byInit = {};
+            
+            data.cases.forEach((c, i) => {
+                const id = c.initId !== undefined ? c.initId : 'none';
+                if (!byInit[id]) byInit[id] = [];
+                byInit[id].push({ ...c, idx: i });
             });
             
-            let html='';
-            Object.keys(byInit).forEach(id=>{
-                const init=id==='none'?null:data.initiatives[id];
-                const cases=byInit[id];
+            let html = '';
+            
+            Object.keys(byInit).forEach(id => {
+                const init = id === 'none' ? null : data.initiatives[id];
+                const cases = byInit[id];
                 
-                if(init){
-                    html+=`<div style="margin-bottom:30px;background:linear-gradient(135deg,${init.color}15,${init.color}08);border-radius:16px;overflow:hidden">
-                        <div class="initiative-header" style="background:${init.color}">
+                if (init) {
+                    html += `<div style="margin-bottom:24px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+                        <div class="initiative-header color-${colorClasses[init.color]}">
                             <div>
                                 <div class="initiative-title">${init.name}</div>
                                 <div class="initiative-desc">${init.desc}</div>
                             </div>
                         </div>
-                        <div style="padding:15px">`;
-                }else{
-                    html+=`<div style="margin-bottom:30px">`;
+                        <div style="padding:16px;background:var(--bg)">`;
+                } else {
+                    html += `<div style="margin-bottom:24px">`;
                 }
                 
-                cases.forEach(c=>{
-                    const pct=Math.min((c.collected/c.target)*100,100);
-                    const rem=Math.max(c.target-c.collected,0);
-                    const status={'active':'نشطة','urgent':'عاجلة','completed':'مكتملة'}[c.status];
-                    const color={'active':'#5B8E7D','urgent':'#BC4749','completed':'#2D5A27'}[c.status];
+                cases.forEach(c => {
+                    const pct = Math.min((c.collected / c.target) * 100, 100);
+                    const rem = Math.max(c.target - c.collected, 0);
+                    const closed = isCaseClosed(c);
                     
-                    html+=`<div class="case-card" data-id="${c.idx}">
+                    let statusText = '';
+                    let statusClass = '';
+                    
+                    if (closed) {
+                        statusText = 'مغلقة - تم الوصول للهدف';
+                        statusClass = 'closed';
+                    } else if (c.status === 'completed') {
+                        statusText = 'مكتملة';
+                        statusClass = 'completed';
+                    } else if (c.status === 'urgent') {
+                        statusText = 'عاجلة';
+                        statusClass = 'urgent';
+                    } else {
+                        statusText = 'نشطة';
+                        statusClass = 'active';
+                    }
+                    
+                    html += `<div class="case-card" data-id="${c.idx}">
                         <div class="case-images">
-                            ${c.images.map((img,i)=>`<img src="${img}" class="case-image ${i===0?'active':''}" alt="${c.title}">`).join('')}
-                            ${c.images.length>1?`
+                            ${c.images.map((img, i) => `<img src="${img}" class="case-image ${i === 0 ? 'active' : ''}" alt="${c.title}">`).join('')}
+                            ${c.images.length > 1 ? `
                                 <button class="image-nav prev" onclick="navImg(${c.idx},-1)">◀</button>
                                 <button class="image-nav next" onclick="navImg(${c.idx},1)">▶</button>
-                                <div class="indicators">${c.images.map((v,i)=>`<div class="indicator ${i===0?'active':''}" onclick="showImg(${c.idx},${i})"></div>`).join('')}</div>
-                            `:''}
+                                <div class="indicators">${c.images.map((v, i) => `<div class="indicator ${i === 0 ? 'active' : ''}" onclick="showImg(${c.idx},${i})"></div>`).join('')}</div>
+                            ` : ''}
                         </div>
                         <div class="case-content">
-                            <span class="case-status" style="color:${color}">${status}</span>
+                            <span class="case-status ${statusClass}">${statusText}</span>
                             <h3 class="case-title">${c.title}</h3>
                             <p class="case-description">${c.desc}</p>
                             <div class="progress-info">
-                                <span class="collected">مجموع: ${fmt(c.collected)}</span>
-                                <span class="remaining">متبقي: ${fmt(rem)}</span>
+                                <span class="collected">${fmt(c.collected)}</span>
+                                <span class="remaining">من ${fmt(c.target)}</span>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="progress-bar" style="width:${pct}%;${init?`background:linear-gradient(90deg, ${init.color}, ${init.color}dd)`:''}">${Math.round(pct)}%</div>
+                                <div class="progress-bar" style="width:${pct}%;background-color:${init ? init.color : 'var(--text)'}"></div>
                             </div>
-                            <div style="margin-top:8px;font-size:12px;color:var(--text-light)">الهدف: ${fmt(c.target)}</div>
-                            <button class="btn btn-primary" onclick="donate(${c.idx})" style="margin-top:12px;${init?`background:linear-gradient(135deg, ${init.color}, ${init.color}dd)`:''}" >❤️ تبرع الآن</button>
+                            <button class="btn btn-primary" onclick="donate(${c.idx})" 
+                                    ${closed ? 'disabled' : ''}
+                                    style="${init && !closed ? `background-color:${init.color}` : ''}">
+                                ${closed ? '✓ مكتمل' : '❤️ تبرع الآن'}
+                            </button>
                         </div>
                     </div>`;
                 });
                 
-                html+=`</div></div>`;
+                html += `</div></div>`;
             });
             
-            grid.innerHTML=html;
+            grid.innerHTML = html;
         }
         
-        let imgIdx={};
-        function navImg(id,dir){
-            const card=document.querySelector(`[data-id="${id}"]`);
-            const imgs=card.querySelectorAll('.case-image');
-            const inds=card.querySelectorAll('.indicator');
-            if(!imgIdx[id])imgIdx[id]=0;
+        let imgIdx = {};
+        
+        function navImg(id, dir) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            const imgs = card.querySelectorAll('.case-image');
+            const inds = card.querySelectorAll('.indicator');
+            if (!imgIdx[id]) imgIdx[id] = 0;
             imgs[imgIdx[id]].classList.remove('active');
             inds[imgIdx[id]].classList.remove('active');
-            imgIdx[id]=(imgIdx[id]+dir+imgs.length)%imgs.length;
+            imgIdx[id] = (imgIdx[id] + dir + imgs.length) % imgs.length;
             imgs[imgIdx[id]].classList.add('active');
             inds[imgIdx[id]].classList.add('active');
         }
         
-        function showImg(id,i){
-            const card=document.querySelector(`[data-id="${id}"]`);
-            const imgs=card.querySelectorAll('.case-image');
-            const inds=card.querySelectorAll('.indicator');
-            imgs.forEach(img=>img.classList.remove('active'));
-            inds.forEach(ind=>ind.classList.remove('active'));
+        function showImg(id, i) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            const imgs = card.querySelectorAll('.case-image');
+            const inds = card.querySelectorAll('.indicator');
+            imgs.forEach(img => img.classList.remove('active'));
+            inds.forEach(ind => ind.classList.remove('active'));
             imgs[i].classList.add('active');
             inds[i].classList.add('active');
-            imgIdx[id]=i;
+            imgIdx[id] = i;
         }
         
-        function donate(id){
-            const c=data.cases[id];
-            const banks=data.banks&&data.banks.length>0?data.banks.map(b=>`
-                <div class="bank-account">
-                    <div class="bank-info-item"><span class="bank-info-label">البنك:</span><span class="bank-info-value">${b.name}</span></div>
-                    <div class="bank-info-item"><span class="bank-info-label">رقم الحساب:</span><span class="bank-info-value">${b.account}</span></div>
-                    <div class="bank-info-item"><span class="bank-info-label">صاحب الحساب:</span><span class="bank-info-value">${b.owner}</span></div>
-                    ${b.iban?`<div class="bank-info-item"><span class="bank-info-label">IBAN:</span><span class="bank-info-value">${b.iban}</span></div>`:''}
-                </div>
-            `).join(''):'<p style="text-align:center;font-size:13px">لا توجد حسابات بنكية</p>';
+        function donate(id) {
+            const c = data.cases[id];
             
-            document.getElementById('donationContent').innerHTML=`
-                <div style="margin-bottom:15px;padding:12px;background:var(--accent);border-radius:10px">
+            if (isCaseClosed(c)) {
+                notify('هذه الحالة مغلقة - تم الوصول للهدف', 1);
+                return;
+            }
+            
+            const banks = data.banks && data.banks.length > 0 ? data.banks.map(b => `
+                <div class="bank-account">
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">البنك:</span>
+                        <span class="bank-info-value">${b.name}</span>
+                    </div>
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">رقم الحساب:</span>
+                        <span class="bank-info-value">${b.account}</span>
+                    </div>
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">صاحب الحساب:</span>
+                        <span class="bank-info-value">${b.owner}</span>
+                    </div>
+                    ${b.iban ? `<div class="bank-info-item">
+                        <span class="bank-info-label">IBAN:</span>
+                        <span class="bank-info-value">${b.iban}</span>
+                    </div>` : ''}
+                </div>
+            `).join('') : '<p style="text-align:center;font-size:13px;color:var(--text-secondary)">لا توجد حسابات بنكية</p>';
+            
+            document.getElementById('donationContent').innerHTML = `
+                <div style="margin-bottom:16px;padding:12px;background:var(--surface);border-radius:6px">
                     <h3 style="font-size:15px;margin-bottom:8px">${c.title}</h3>
-                    <p style="font-size:12px">المتبقي: <strong style="color:var(--danger)">${fmt(c.target-c.collected)}</strong></p>
+                    <p style="font-size:13px;color:var(--text-secondary)">المتبقي: <strong style="color:var(--red)">${fmt(c.target - c.collected)}</strong></p>
                 </div>
                 <h4 style="margin-bottom:12px;font-size:14px">الحسابات البنكية:</h4>
                 ${banks}
-                <div style="margin-top:20px;padding-top:15px;border-top:2px solid var(--accent)">
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
                     <form onsubmit="confirmDonate(event,${id})">
                         <div class="form-group">
                             <label class="form-label">اسمك (اختياري)</label>
@@ -971,7 +1268,10 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">المبلغ *</label>
-                            <input type="number" class="form-input" id="donateAmount" required min="1">
+                            <input type="number" class="form-input" id="donateAmount" required min="1" max="${c.target - c.collected}">
+                            <p style="font-size:12px;color:var(--text-secondary);margin-top:4px">
+                                الحد الأقصى: ${fmt(c.target - c.collected)}
+                            </p>
                         </div>
                         <div class="form-group">
                             <label class="form-label">إيصال التحويل (اختياري)</label>
@@ -981,46 +1281,58 @@
                             </div>
                             <div class="preview-images" id="receiptPrev"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary">✅ تأكيد</button>
+                        <button type="submit" class="btn btn-primary">✅ تأكيد التبرع</button>
                     </form>
                 </div>
             `;
             
             document.getElementById('donationModal').classList.add('active');
             
-            document.getElementById('receipt').addEventListener('change',e=>{
-                const file=e.target.files[0];
-                if(file){
-                    compress(file,base64=>{
-                        document.getElementById('receiptPrev').innerHTML=`<div class="preview-image"><img src="${base64}"></div>`;
+            document.getElementById('receipt').addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (file) {
+                    compress(file, base64 => {
+                        document.getElementById('receiptPrev').innerHTML = `<div class="preview-image"><img src="${base64}"></div>`;
                     });
                 }
             });
         }
         
-        function closeDonationModal(){
+        function closeDonationModal() {
             document.getElementById('donationModal').classList.remove('active');
         }
         
-        async function confirmDonate(e,id){
+        async function confirmDonate(e, id) {
             e.preventDefault();
-            const amt=parseFloat(document.getElementById('donateAmount').value);
-            const name=document.getElementById('donorName').value.trim()||'متبرع كريم';
+            const c = data.cases[id];
+            const amt = parseFloat(document.getElementById('donateAmount').value);
+            const name = document.getElementById('donorName').value.trim() || 'متبرع كريم';
             
-            if(amt<=0){
-                notify('مبلغ غير صحيح',1);
+            if (amt <= 0) {
+                notify('مبلغ غير صحيح', 1);
                 return;
             }
             
-            const img=document.querySelector('#receiptPrev img');
-            const receipt=img?img.src:null;
+            const remaining = c.target - c.collected;
+            if (amt > remaining) {
+                notify(`المبلغ أكبر من المتبقي. الحد الأقصى: ${fmt(remaining)}`, 1);
+                return;
+            }
             
-            if(!data.cases[id].donations)data.cases[id].donations=[];
-            data.cases[id].donations.push({amount:amt,name:name,date:new Date().toISOString()});
-            data.cases[id].collected+=amt;
+            const img = document.querySelector('#receiptPrev img');
+            const receipt = img ? img.src : null;
             
-            if(data.cases[id].collected>=data.cases[id].target){
-                data.cases[id].status='completed';
+            if (!data.cases[id].donations) data.cases[id].donations = [];
+            data.cases[id].donations.push({
+                amount: amt,
+                name: name,
+                date: new Date().toISOString()
+            });
+            
+            data.cases[id].collected += amt;
+            
+            if (data.cases[id].collected >= data.cases[id].target) {
+                data.cases[id].status = 'completed';
             }
             
             await saveToWorker();
@@ -1030,332 +1342,331 @@
             await sendTelegramNotification(message, receipt);
             
             closeDonationModal();
-            notify(`شكراً ${name}! تم التحديث 💚`);
+            
+            if (isCaseClosed(data.cases[id])) {
+                notify(`شكراً ${name}! تم إغلاق الحالة - وصلنا للهدف 🎉`, 0);
+            } else {
+                notify(`شكراً ${name}! تم التحديث 💚`, 0);
+            }
         }
         
-        function compress(file,cb){
-            const r=new FileReader();
-            r.onload=e=>{
-                const img=new Image();
-                img.onload=()=>{
-                    const canvas=document.createElement('canvas');
-                    let w=img.width,h=img.height;
-                    const max=600;
-                    if(w>h){
-                        if(w>max){h*=max/w;w=max}
-                    }else{
-                        if(h>max){w*=max/h;h=max}
+        function compress(file, cb) {
+            const r = new FileReader();
+            r.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    const max = 600;
+                    if (w > h) {
+                        if (w > max) { h *= max / w; w = max; }
+                    } else {
+                        if (h > max) { w *= max / h; h = max; }
                     }
-                    canvas.width=w;
-                    canvas.height=h;
-                    const ctx=canvas.getContext('2d');
-                    ctx.fillStyle='white';
-                    ctx.fillRect(0,0,w,h);
-                    ctx.drawImage(img,0,0,w,h);
-                    cb(canvas.toDataURL('image/jpeg',0.5));
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    cb(canvas.toDataURL('image/jpeg', 0.5));
                 };
-                img.src=e.target.result;
+                img.src = e.target.result;
             };
             r.readAsDataURL(file);
         }
         
-        let tap=0,timer;
-        document.addEventListener('DOMContentLoaded',()=>{
-            document.querySelector('.logo').addEventListener('click',()=>{
+        let tap = 0, timer;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.logo').addEventListener('click', () => {
                 tap++;
                 clearTimeout(timer);
-                timer=setTimeout(()=>tap=0,800);
-                if(tap===5){
+                timer = setTimeout(() => tap = 0, 800);
+                if (tap === 5) {
                     adminLogin();
-                    tap=0;
+                    tap = 0;
                 }
             });
             
-            document.getElementById('importFile').addEventListener('change',e=>{
-                const file=e.target.files[0];
-                if(!file)return;
+            document.getElementById('importFile').addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) return;
                 
-                const reader=new FileReader();
-                reader.onload=e=>{
-                    try{
-                        const imported=JSON.parse(e.target.result);
-                        if(confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')){
-                            data=imported;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')) {
+                            data = imported;
                             saveToWorker();
                             renderInits();
                             renderAllCases();
                             renderCases();
                             renderBanks();
-                            notify('تم استيراد البيانات بنجاح ✅');
+                            notify('تم استيراد البيانات بنجاح ✅', 0);
                         }
-                    }catch(err){
-                        notify('خطأ: الملف غير صالح',1);
+                    } catch (err) {
+                        notify('خطأ: الملف غير صالح', 1);
                     }
                 };
                 reader.readAsText(file);
-                e.target.value='';
+                e.target.value = '';
             });
         });
         
-        function adminLogin(){
-            const p=prompt('كلمة المرور:');
-            if(p===data.password){
+        function adminLogin() {
+            const p = prompt('كلمة المرور:');
+            if (p === data.password) {
                 openAdmin();
-            }else if(p!==null){
-                notify('كلمة مرور خاطئة',1);
+            } else if (p !== null) {
+                notify('كلمة مرور خاطئة', 1);
             }
         }
         
-        function openAdmin(){
+        function openAdmin() {
             document.getElementById('adminPanel').classList.add('active');
             renderInits();
             renderAllCases();
             renderBanks();
         }
         
-        function closeAdminPanel(){
+        function closeAdminPanel() {
             document.getElementById('adminPanel').classList.remove('active');
             document.getElementById('syncIndicator').classList.remove('show');
         }
         
-        function switchTab(t){
-            document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+        function switchTab(t) {
+            document.querySelectorAll('.admin-tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
             event.target.classList.add('active');
-            document.getElementById(t+'Tab').classList.add('active');
+            document.getElementById(t + 'Tab').classList.add('active');
         }
         
-        function renderInits(){
-            const list=document.getElementById('initList');
-            if(!list)return;
+        function renderInits() {
+            const list = document.getElementById('initList');
+            if (!list) return;
             
-            if(!data.initiatives || data.initiatives.length===0){
-                list.innerHTML='<p style="text-align:center;padding:20px">لا توجد مبادرات</p>';
+            if (!data.initiatives || data.initiatives.length === 0) {
+                list.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-secondary)">لا توجد مبادرات</p>';
                 return;
             }
             
-            list.innerHTML=data.initiatives.map((init,i)=>{
-                const cases=data.cases?data.cases.filter(c=>c.initId===i):[];
-                return`<div style="margin-bottom:20px;padding:15px;background:var(--bg);border-radius:12px;border-right:4px solid ${init.color}">
-                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
+            list.innerHTML = data.initiatives.map((init, i) => {
+                const cases = data.cases ? data.cases.filter(c => c.initId === i) : [];
+                return `<div style="margin-bottom:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;border-right:3px solid ${init.color}">
+                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
                         <div style="flex:1">
-                            <h3 style="font-size:16px;margin-bottom:3px;color:${init.color}">${init.name}</h3>
-                            <p style="font-size:12px;color:var(--text-light)">${init.desc}</p>
-                            <p style="font-size:11px;margin-top:5px">📊 ${cases.length} حالة</p>
+                            <h3 style="font-size:16px;margin-bottom:4px;color:${init.color}">${init.name}</h3>
+                            <p style="font-size:13px;color:var(--text-secondary)">${init.desc}</p>
+                            <p style="font-size:12px;margin-top:6px;color:var(--text-secondary)">📊 ${cases.length} حالة</p>
                         </div>
                         <div style="display:flex;gap:6px;flex-shrink:0">
-                            <button class="btn btn-primary btn-small" onclick="editInit(${i})" style="background:var(--secondary)">✏️</button>
+                            <button class="btn btn-secondary btn-small" onclick="editInit(${i})">✏️</button>
                             <button class="btn btn-danger btn-small" onclick="delInit(${i})">🗑️</button>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-small" onclick="showCaseForm(${i})" style="width:100%;margin-bottom:10px;background:${init.color}">➕ إضافة حالة</button>
-                    ${cases.map(c=>{
-                        const idx=data.cases.indexOf(c);
-                        const pct=Math.min((c.collected/c.target)*100,100);
-                        return`<div style="background:white;padding:10px;border-radius:8px;margin-bottom:8px">
+                    <button class="btn btn-primary btn-small" onclick="showCaseForm(${i})" style="width:100%;margin-bottom:8px;background:${init.color}">+ إضافة حالة</button>
+                    ${cases.map(c => {
+                        const idx = data.cases.indexOf(c);
+                        const pct = Math.min((c.collected / c.target) * 100, 100);
+                        const closed = isCaseClosed(c);
+                        return `<div style="background:var(--bg);border:1px solid var(--border);padding:10px;border-radius:6px;margin-bottom:8px">
                             <div style="display:flex;justify-content:space-between;margin-bottom:8px">
                                 <div style="flex:1">
-                                    <h4 style="font-size:14px;margin-bottom:3px">${c.title}</h4>
-                                    <p style="font-size:11px;color:var(--text-light)">${fmt(c.collected)} / ${fmt(c.target)} (${Math.round(pct)}%)</p>
+                                    <h4 style="font-size:14px;margin-bottom:3px">${c.title} ${closed ? '🔒' : ''}</h4>
+                                    <p style="font-size:12px;color:var(--text-secondary)">${fmt(c.collected)} / ${fmt(c.target)} (${Math.round(pct)}%)</p>
                                 </div>
                                 <button class="btn btn-danger btn-small" onclick="delCase(${idx})">🗑️</button>
                             </div>
-                            <div class="progress-bar-container"><div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg, ${init.color}, ${init.color}dd)"></div></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:${pct}%;background-color:${init.color}"></div>
+                            </div>
                         </div>`;
                     }).join('')}
                 </div>`;
             }).join('');
         }
         
-        function renderAllCases(){
-            const list=document.getElementById('allCasesList');
-            if(!list)return;
+        function renderAllCases() {
+            const list = document.getElementById('allCasesList');
+            if (!list) return;
             
-            if(!data.cases || data.cases.length===0){
-                list.innerHTML='<p style="text-align:center;padding:20px;color:var(--text-light)">لا توجد حالات</p>';
+            if (!data.cases || data.cases.length === 0) {
+                list.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-secondary)">لا توجد حالات</p>';
                 return;
             }
             
-            const completed=data.cases.filter(c=>c.status==='completed');
-            const urgent=data.cases.filter(c=>c.status==='urgent');
-            const active=data.cases.filter(c=>c.status==='active');
-            const unassigned=data.cases.filter(c=>c.initId===undefined||c.initId==='none');
+            const completed = data.cases.filter(c => c.status === 'completed');
+            const urgent = data.cases.filter(c => c.status === 'urgent');
+            const active = data.cases.filter(c => c.status === 'active');
+            const unassigned = data.cases.filter(c => c.initId === undefined || c.initId === 'none');
             
-            let html='';
+            let html = '';
             
-            if(unassigned.length>0){
-                html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:var(--danger);display:flex;align-items:center;gap:8px">
-                        <span>⚠️</span>
-                        <span>حالات خارج المبادرات (${unassigned.length})</span>
-                    </h4>
-                    ${unassigned.map(c=>{
-                        const idx=data.cases.indexOf(c);
-                        return renderCaseItem(c,idx);
-                    }).join('')}
+            if (unassigned.length > 0) {
+                html += `<div style="margin-bottom:20px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:var(--text-secondary)">⚠️ حالات خارج المبادرات (${unassigned.length})</h4>
+                    ${unassigned.map(c => renderCaseItem(c, data.cases.indexOf(c))).join('')}
                 </div>`;
             }
             
-            if(urgent.length>0){
-                html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#BC4749;display:flex;align-items:center;gap:8px">
-                        <span>🔴</span>
-                        <span>حالات عاجلة (${urgent.length})</span>
-                    </h4>
-                    ${urgent.map(c=>{
-                        const idx=data.cases.indexOf(c);
-                        return renderCaseItem(c,idx);
-                    }).join('')}
+            if (urgent.length > 0) {
+                html += `<div style="margin-bottom:20px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:var(--red)">🔴 حالات عاجلة (${urgent.length})</h4>
+                    ${urgent.map(c => renderCaseItem(c, data.cases.indexOf(c))).join('')}
                 </div>`;
             }
             
-            if(active.length>0){
-                html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#5B8E7D;display:flex;align-items:center;gap:8px">
-                        <span>🟢</span>
-                        <span>حالات نشطة (${active.length})</span>
-                    </h4>
-                    ${active.map(c=>{
-                        const idx=data.cases.indexOf(c);
-                        return renderCaseItem(c,idx);
-                    }).join('')}
+            if (active.length > 0) {
+                html += `<div style="margin-bottom:20px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:var(--blue)">🟢 حالات نشطة (${active.length})</h4>
+                    ${active.map(c => renderCaseItem(c, data.cases.indexOf(c))).join('')}
                 </div>`;
             }
             
-            if(completed.length>0){
-                html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#2D5A27;display:flex;align-items:center;gap:8px">
-                        <span>✅</span>
-                        <span>حالات مكتملة (${completed.length})</span>
-                    </h4>
-                    ${completed.map(c=>{
-                        const idx=data.cases.indexOf(c);
-                        return renderCaseItem(c,idx);
-                    }).join('')}
+            if (completed.length > 0) {
+                html += `<div style="margin-bottom:20px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:var(--green)">✅ حالات مكتملة (${completed.length})</h4>
+                    ${completed.map(c => renderCaseItem(c, data.cases.indexOf(c))).join('')}
                 </div>`;
             }
             
-            list.innerHTML=html;
+            list.innerHTML = html;
         }
         
-        function renderCaseItem(c,idx){
-            const pct=Math.min((c.collected/c.target)*100,100);
-            const init=c.initId!==undefined&&data.initiatives&&data.initiatives[c.initId]?data.initiatives[c.initId]:null;
-            const statusColors={'active':'#5B8E7D','urgent':'#BC4749','completed':'#2D5A27'};
-            const statusNames={'active':'نشطة','urgent':'عاجلة','completed':'مكتملة'};
+        function renderCaseItem(c, idx) {
+            const pct = Math.min((c.collected / c.target) * 100, 100);
+            const init = c.initId !== undefined && data.initiatives && data.initiatives[c.initId] ? data.initiatives[c.initId] : null;
+            const closed = isCaseClosed(c);
             
-            return`<div style="background:var(--bg);padding:12px;border-radius:10px;margin-bottom:10px;border-right:3px solid ${statusColors[c.status]}">
+            const statusColors = {
+                'active': 'var(--blue)',
+                'urgent': 'var(--red)',
+                'completed': 'var(--green)'
+            };
+            
+            const statusNames = {
+                'active': 'نشطة',
+                'urgent': 'عاجلة',
+                'completed': 'مكتملة'
+            };
+            
+            return `<div style="background:var(--surface);border:1px solid var(--border);padding:12px;border-radius:6px;margin-bottom:10px;border-right:3px solid ${statusColors[c.status]}">
                 <div style="display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:8px">
                     <div style="flex:1;min-width:0">
-                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap">
-                            <h4 style="font-size:14px;margin:0">${c.title}</h4>
-                        </div>
-                        <p style="font-size:11px;color:var(--text-light);margin:0 0 5px 0;line-height:1.4">${c.desc.substring(0,80)}${c.desc.length>80?'...':''}</p>
+                        <h4 style="font-size:14px;margin-bottom:4px">${c.title} ${closed ? '🔒' : ''}</h4>
+                        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;line-height:1.4">${c.desc.substring(0, 80)}${c.desc.length > 80 ? '...' : ''}</p>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px">
                             <span style="color:${statusColors[c.status]};font-weight:600">⚡ ${statusNames[c.status]}</span>
-                            ${init?`<span style="color:${init.color};font-weight:600">📂 ${init.name}</span>`:'<span style="color:var(--danger)">📂 بدون مبادرة</span>'}
+                            ${init ? `<span style="color:${init.color};font-weight:600">📂 ${init.name}</span>` : '<span style="color:var(--text-secondary)">📂 بدون مبادرة</span>'}
+                            ${closed ? '<span style="color:var(--text-secondary);font-weight:600">🔒 مغلقة</span>' : ''}
                         </div>
                     </div>
-                    <button class="btn btn-danger btn-small" onclick="delCaseConfirm(${idx})" style="flex-shrink:0">🗑️ حذف</button>
+                    <button class="btn btn-danger btn-small" onclick="delCaseConfirm(${idx})">🗑️</button>
                 </div>
                 <div style="margin-bottom:5px">
-                    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
-                        <span style="color:var(--success);font-weight:600">${fmt(c.collected)}</span>
-                        <span style="color:var(--text-light)">${fmt(c.target)}</span>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                        <span style="color:var(--green);font-weight:600">${fmt(c.collected)}</span>
+                        <span style="color:var(--text-secondary)">${fmt(c.target)}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div class="progress-bar" style="width:${pct}%;${init?`background:linear-gradient(90deg, ${init.color}, ${init.color}dd)`:''}">${Math.round(pct)}%</div>
+                        <div class="progress-bar" style="width:${pct}%;background-color:${init ? init.color : 'var(--text)'}"></div>
                     </div>
                 </div>
-                ${c.donations&&c.donations.length>0?`<div style="font-size:11px;color:var(--text-light);margin-top:8px">💚 عدد المتبرعين: ${c.donations.length}</div>`:''}
+                ${c.donations && c.donations.length > 0 ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">💚 ${c.donations.length} متبرع</div>` : ''}
             </div>`;
         }
         
-        function delCaseConfirm(idx){
-            const c=data.cases[idx];
-            const msg=`هل تريد حذف الحالة "${c.title}"؟\n\n${c.donations&&c.donations.length>0?`⚠️ تحتوي على ${c.donations.length} متبرع`:''}`;
-            if(confirm(msg)){
+        function delCaseConfirm(idx) {
+            const c = data.cases[idx];
+            const msg = `هل تريد حذف الحالة "${c.title}"?\n\n${c.donations && c.donations.length > 0 ? `⚠️ تحتوي على ${c.donations.length} متبرع` : ''}`;
+            if (confirm(msg)) {
                 delCase(idx);
             }
         }
         
-        function showInitForm(){
-            document.getElementById('initForm').style.display='block';
-            document.getElementById('initName').value='';
-            document.getElementById('initDesc').value='';
-            document.getElementById('initColor').value='#2D5A27';
-            editInitIdx=null;
+        function showInitForm() {
+            document.getElementById('initForm').style.display = 'block';
+            document.getElementById('initName').value = '';
+            document.getElementById('initDesc').value = '';
+            document.getElementById('initColor').value = '#10B981';
+            editInitIdx = null;
         }
         
-        function editInit(i){
-            const init=data.initiatives[i];
-            editInitIdx=i;
-            document.getElementById('initForm').style.display='block';
-            document.getElementById('initName').value=init.name;
-            document.getElementById('initDesc').value=init.desc;
-            document.getElementById('initColor').value=init.color;
-            document.getElementById('initForm').scrollIntoView({behavior:'smooth'});
+        function editInit(i) {
+            const init = data.initiatives[i];
+            editInitIdx = i;
+            document.getElementById('initForm').style.display = 'block';
+            document.getElementById('initName').value = init.name;
+            document.getElementById('initDesc').value = init.desc;
+            document.getElementById('initColor').value = init.color;
+            document.getElementById('initForm').scrollIntoView({ behavior: 'smooth' });
         }
         
-        async function saveInitiative(e){
+        async function saveInitiative(e) {
             e.preventDefault();
-            const init={
-                name:document.getElementById('initName').value,
-                desc:document.getElementById('initDesc').value,
-                color:document.getElementById('initColor').value
+            const init = {
+                name: document.getElementById('initName').value,
+                desc: document.getElementById('initDesc').value,
+                color: document.getElementById('initColor').value
             };
             
-            if(editInitIdx!==null){
-                data.initiatives[editInitIdx]=init;
-            }else{
-                if(!data.initiatives) data.initiatives = [];
+            if (editInitIdx !== null) {
+                data.initiatives[editInitIdx] = init;
+            } else {
+                if (!data.initiatives) data.initiatives = [];
                 data.initiatives.push(init);
             }
             
             await saveToWorker();
-            document.getElementById('initForm').style.display='none';
+            document.getElementById('initForm').style.display = 'none';
             renderInits();
             renderCases();
-            notify('تم الحفظ');
+            notify('تم الحفظ', 0);
         }
         
-        async function delInit(i){
-            if(!confirm('حذف المبادرة؟'))return;
-            data.initiatives.splice(i,1);
-            if(data.cases){
-                data.cases.forEach(c=>{if(c.initId>i)c.initId--});
+        async function delInit(i) {
+            if (!confirm('حذف المبادرة؟')) return;
+            data.initiatives.splice(i, 1);
+            if (data.cases) {
+                data.cases.forEach(c => { if (c.initId > i) c.initId--; });
             }
             await saveToWorker();
             renderInits();
             renderCases();
-            notify('تم الحذف');
+            notify('تم الحذف', 0);
         }
         
-        function showCaseForm(initId){
-            document.getElementById('caseForm').style.display='block';
-            document.getElementById('caseInitId').value=initId;
-            document.getElementById('caseTitle').value='';
-            document.getElementById('caseDesc').value='';
-            document.getElementById('caseTarget').value='';
-            document.getElementById('caseCollected').value='0';
-            document.getElementById('previewImages').innerHTML='';
-            tempImages=[];
-            editCaseIdx=null;
+        function showCaseForm(initId) {
+            document.getElementById('caseForm').style.display = 'block';
+            document.getElementById('caseInitId').value = initId;
+            document.getElementById('caseTitle').value = '';
+            document.getElementById('caseDesc').value = '';
+            document.getElementById('caseTarget').value = '';
+            document.getElementById('caseCollected').value = '0';
+            document.getElementById('previewImages').innerHTML = '';
+            tempImages = [];
+            editCaseIdx = null;
             
-            document.getElementById('caseImages').addEventListener('change',e=>{
-                Array.from(e.target.files).forEach(f=>{
-                    if(f.type.startsWith('image/')){
-                        compress(f,b64=>{
+            const handler = e => {
+                Array.from(e.target.files).forEach(f => {
+                    if (f.type.startsWith('image/')) {
+                        compress(f, b64 => {
                             tempImages.push(b64);
                             renderPreviews();
                         });
                     }
                 });
-            });
+            };
+            
+            const input = document.getElementById('caseImages');
+            input.removeEventListener('change', handler);
+            input.addEventListener('change', handler);
         }
         
-        function renderPreviews(){
-            document.getElementById('previewImages').innerHTML=tempImages.map((img,i)=>
+        function renderPreviews() {
+            document.getElementById('previewImages').innerHTML = tempImages.map((img, i) =>
                 `<div class="preview-image">
                     <img src="${img}">
                     <button class="preview-remove" onclick="tempImages.splice(${i},1);renderPreviews()">×</button>
@@ -1363,154 +1674,174 @@
             ).join('');
         }
         
-        async function saveCase(e){
+        async function saveCase(e) {
             e.preventDefault();
             
-            if(tempImages.length===0){
-                notify('أضف صورة واحدة على الأقل',1);
+            if (tempImages.length === 0) {
+                notify('أضف صورة واحدة على الأقل', 1);
                 return;
             }
             
-            const c={
-                initId:parseInt(document.getElementById('caseInitId').value),
-                title:document.getElementById('caseTitle').value,
-                desc:document.getElementById('caseDesc').value,
-                target:parseFloat(document.getElementById('caseTarget').value),
-                collected:parseFloat(document.getElementById('caseCollected').value)||0,
-                status:document.getElementById('caseStatus').value,
-                images:[...tempImages]
+            const c = {
+                initId: parseInt(document.getElementById('caseInitId').value),
+                title: document.getElementById('caseTitle').value,
+                desc: document.getElementById('caseDesc').value,
+                target: parseFloat(document.getElementById('caseTarget').value),
+                collected: parseFloat(document.getElementById('caseCollected').value) || 0,
+                status: document.getElementById('caseStatus').value,
+                images: [...tempImages]
             };
             
-            if(editCaseIdx!==null){
-                data.cases[editCaseIdx]=c;
-            }else{
-                if(!data.cases) data.cases = [];
+            if (editCaseIdx !== null) {
+                data.cases[editCaseIdx] = c;
+            } else {
+                if (!data.cases) data.cases = [];
                 data.cases.push(c);
             }
             
             await saveToWorker();
-            document.getElementById('caseForm').style.display='none';
+            document.getElementById('caseForm').style.display = 'none';
             renderInits();
             renderAllCases();
             renderCases();
-            notify('تم الحفظ');
+            notify('تم الحفظ', 0);
         }
         
-        async function delCase(i){
-            data.cases.splice(i,1);
+        async function delCase(i) {
+            data.cases.splice(i, 1);
             await saveToWorker();
             renderInits();
             renderAllCases();
             renderCases();
-            notify('تم الحذف');
+            notify('تم الحذف', 0);
         }
         
-        function renderBanks(){
-            const list=document.getElementById('bankList');
-            if(!list)return;
+        function renderBanks() {
+            const list = document.getElementById('bankList');
+            if (!list) return;
             
-            if(!data.banks || data.banks.length===0){
-                list.innerHTML='<p style="text-align:center;padding:20px">لا توجد حسابات</p>';
+            if (!data.banks || data.banks.length === 0) {
+                list.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-secondary)">لا توجد حسابات</p>';
                 return;
             }
             
-            list.innerHTML=data.banks.map((b,i)=>`
+            list.innerHTML = data.banks.map((b, i) => `
                 <div class="bank-account">
-                    <div class="bank-info-item"><span class="bank-info-label">البنك:</span><span class="bank-info-value">${b.name}</span></div>
-                    <div class="bank-info-item"><span class="bank-info-label">الحساب:</span><span class="bank-info-value">${b.account}</span></div>
-                    <div class="bank-info-item"><span class="bank-info-label">الاسم:</span><span class="bank-info-value">${b.owner}</span></div>
-                    ${b.iban?`<div class="bank-info-item"><span class="bank-info-label">IBAN:</span><span class="bank-info-value">${b.iban}</span></div>`:''}
-                    <button class="btn btn-danger btn-small" onclick="delBank(${i})" style="margin-top:10px">حذف</button>
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">البنك:</span>
+                        <span class="bank-info-value">${b.name}</span>
+                    </div>
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">رقم الحساب:</span>
+                        <span class="bank-info-value">${b.account}</span>
+                    </div>
+                    <div class="bank-info-item">
+                        <span class="bank-info-label">صاحب الحساب:</span>
+                        <span class="bank-info-value">${b.owner}</span>
+                    </div>
+                    ${b.iban ? `<div class="bank-info-item">
+                        <span class="bank-info-label">IBAN:</span>
+                        <span class="bank-info-value">${b.iban}</span>
+                    </div>` : ''}
+                    <button class="btn btn-danger btn-small" onclick="delBank(${i})" style="margin-top:12px">حذف</button>
                 </div>
             `).join('');
         }
         
-        function showBankForm(){
-            document.getElementById('bankForm').style.display='block';
-            document.getElementById('bankName').value='';
-            document.getElementById('bankAccount').value='';
-            document.getElementById('bankOwner').value='';
-            document.getElementById('bankIban').value='';
+        function showBankForm() {
+            document.getElementById('bankForm').style.display = 'block';
+            document.getElementById('bankName').value = '';
+            document.getElementById('bankAccount').value = '';
+            document.getElementById('bankOwner').value = '';
+            document.getElementById('bankIban').value = '';
         }
         
-        async function saveBank(e){
+        async function saveBank(e) {
             e.preventDefault();
-            if(!data.banks) data.banks = [];
+            if (!data.banks) data.banks = [];
             data.banks.push({
-                name:document.getElementById('bankName').value,
-                account:document.getElementById('bankAccount').value,
-                owner:document.getElementById('bankOwner').value,
-                iban:document.getElementById('bankIban').value
+                name: document.getElementById('bankName').value,
+                account: document.getElementById('bankAccount').value,
+                owner: document.getElementById('bankOwner').value,
+                iban: document.getElementById('bankIban').value
             });
             await saveToWorker();
-            document.getElementById('bankForm').style.display='none';
+            document.getElementById('bankForm').style.display = 'none';
             renderBanks();
-            notify('تم الحفظ');
+            notify('تم الحفظ', 0);
         }
         
-        async function delBank(i){
-            if(!confirm('حذف الحساب؟'))return;
-            data.banks.splice(i,1);
+        async function delBank(i) {
+            if (!confirm('حذف الحساب؟')) return;
+            data.banks.splice(i, 1);
             await saveToWorker();
             renderBanks();
-            notify('تم الحذف');
+            notify('تم الحذف', 0);
         }
         
-        async function saveSettings(){
-            const p=document.getElementById('adminPass').value;
-            const c=document.getElementById('currency').value;
+        async function saveSettings() {
+            const p = document.getElementById('adminPass').value;
+            const c = document.getElementById('currency').value;
             
-            if(p&&p.length>=4)data.password=p;
-            if(c)data.currency=c;
+            if (p && p.length >= 4) data.password = p;
+            if (c) data.currency = c;
             
             await saveToWorker();
             renderCases();
-            notify('تم الحفظ');
+            notify('تم الحفظ', 0);
         }
         
-        async function clearAll(){
-            if(!confirm('حذف كل شيء؟'))return;
-            if(!confirm('تأكيد نهائي؟'))return;
-            data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light'};
+        async function clearAll() {
+            if (!confirm('حذف كل شيء؟')) return;
+            if (!confirm('تأكيد نهائي؟')) return;
+            
+            data = {
+                initiatives: [],
+                cases: [],
+                banks: [],
+                password: 'admin123',
+                currency: 'SDG',
+                theme: 'light'
+            };
+            
             await saveToWorker();
             renderInits();
             renderCases();
             renderBanks();
             closeAdminPanel();
-            notify('تم الحذف');
+            notify('تم الحذف', 0);
         }
         
-        function exportData(){
-            try{
-                const dataStr=JSON.stringify(data,null,2);
-                const blob=new Blob([dataStr],{type:'application/json'});
-                const url=URL.createObjectURL(blob);
-                const a=document.createElement('a');
-                a.href=url;
-                a.download=`qatarat_backup_${new Date().toISOString().split('T')[0]}.json`;
+        function exportData() {
+            try {
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `qatarat_backup_${new Date().toISOString().split('T')[0]}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                notify('تم تصدير البيانات بنجاح ✅');
-            }catch(e){
-                notify('خطأ في التصدير',1);
+                notify('تم تصدير البيانات ✅', 0);
+            } catch (e) {
+                notify('خطأ في التصدير', 1);
             }
         }
         
-        function importData(){
+        function importData() {
             document.getElementById('importFile').click();
         }
         
-        function notify(msg,err=0){
-            const n=document.getElementById('notification');
-            n.textContent=msg;
-            n.className='notification'+(err?' error':'');
+        function notify(msg, err = 0) {
+            const n = document.getElementById('notification');
+            n.textContent = msg;
+            n.className = 'notification' + (err ? ' error' : ' success');
             n.classList.add('show');
-            setTimeout(()=>n.classList.remove('show'),3000);
+            setTimeout(() => n.classList.remove('show'), 3000);
         }
         
-        document.getElementById('themeToggle').addEventListener('click',toggleTheme);
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         
-        // Initialize app
         loadFromWorker();
         renderCases();
     </script>
