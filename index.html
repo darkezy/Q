@@ -101,23 +101,28 @@
             padding:15px;
         }
         .sync-indicator {
-            position:fixed;
-            bottom:20px;
-            left:20px;
-            background:var(--success);
-            color:white;
-            padding:8px 12px;
-            border-radius:20px;
-            font-size:11px;
-            z-index:1000;
-            display:none;
-            align-items:center;
-            gap:6px;
-            box-shadow:var(--shadow);
-        }
-        .sync-indicator.show {
-            display:flex;
-        }
+    position:fixed;
+    bottom:20px;
+    left:20px;
+    background:var(--success);
+    color:white;
+    padding:8px 12px;
+    border-radius:20px;
+    font-size:11px;
+    z-index:1000;
+    display:none;  /* مهم: يجب أن يكون none */
+    align-items:center;
+    gap:6px;
+    box-shadow:var(--shadow-md);
+    opacity: 0;  /* أضف هذا */
+    visibility: hidden;  /* أضف هذا */
+    transition: opacity 0.3s ease, visibility 0.3s ease;  /* أضف هذا */
+}
+.sync-indicator.show {
+    display:flex;
+    opacity: 1;  /* أضف هذا */
+    visibility: visible;  /* أضف هذا */
+}
         .case-card {
             background:var(--card);
             border-radius:12px;
@@ -669,34 +674,46 @@
         const currencies={'SDG':'ج.س','USD':'$','SAR':'ر.س','AED':'د.إ','EGP':'ج.م'};
         
         // Sync Status Indicator
-        function updateSyncStatus(status) {
-            const indicator = document.getElementById('syncIndicator');
-            if (!indicator) return;
-            
-            const icon = document.getElementById('syncIcon');
-            const text = document.getElementById('syncText');
-            
-            indicator.className = 'sync-indicator';
-            
-            const adminPanel = document.getElementById('adminPanel');
-            if (adminPanel && adminPanel.classList.contains('active')) {
-                indicator.classList.add('show');
-            }
-            
-            if (status === 'syncing') {
-                indicator.style.background = 'var(--primary)';
-                icon.textContent = '↻';
-                text.textContent = 'جاري المزامنة...';
-            } else if (status === 'synced') {
-                indicator.style.background = 'var(--success)';
-                icon.textContent = '✓';
-                text.textContent = 'متزامن';
-            } else if (status === 'error') {
-                indicator.style.background = 'var(--danger)';
-                icon.textContent = '✗';
-                text.textContent = 'خطأ في المزامنة';
-            }
+function updateSyncStatus(status) {
+    const indicator = document.getElementById('syncIndicator');
+    if (!indicator) return;
+    
+    const icon = document.getElementById('syncIcon');
+    const text = document.getElementById('syncText');
+    
+    // إزالة class show أولاً
+    indicator.classList.remove('show');
+    
+    const adminPanel = document.getElementById('adminPanel');
+    const isAdminOpen = adminPanel && adminPanel.classList.contains('active');
+    
+    if (status === 'syncing') {
+        indicator.style.background = 'var(--primary)';
+        icon.textContent = '↻';
+        text.textContent = 'جاري المزامنة...';
+        if (isAdminOpen) {
+            indicator.classList.add('show');
         }
+    } else if (status === 'synced') {
+        indicator.style.background = 'var(--success)';
+        icon.textContent = '✓';
+        text.textContent = 'متزامن';
+        if (isAdminOpen) {
+            indicator.classList.add('show');
+            // إخفاء المؤشر بعد 2 ثانية
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+    } else if (status === 'error') {
+        indicator.style.background = 'var(--danger)';
+        icon.textContent = '✗';
+        text.textContent = 'خطأ في المزامنة';
+        if (isAdminOpen) {
+            indicator.classList.add('show');
+        }
+    }
+}
         
         // Load data from Worker API
         async function loadFromWorker() {
@@ -1087,11 +1104,11 @@
             renderBanks();
         }
         
-        function closeAdminPanel(){
-            document.getElementById('adminPanel').classList.remove('active');
-            document.getElementById('syncIndicator').classList.remove('show');
-        }
-        
+function closeAdminPanel(){
+    document.getElementById('adminPanel').classList.remove('active');
+    // إخفاء مؤشر المزامنة عند إغلاق لوحة التحكم
+    document.getElementById('syncIndicator').classList.remove('show');
+}
         function switchTab(t){
             document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
