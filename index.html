@@ -9,25 +9,26 @@
     
     <style>
         :root {
-            --primary: #7C3AED;
-            --secondary: #A78BFA;
-            --accent: #F3F4F6;
-            --success: #10B981;
-            --danger: #EF4444;
-            --text: #1F2937;
-            --text-light: #6B7280;
-            --bg: #FFFFFF;
-            --card: #FAFAFA;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            /* لوحة ألوان خيرية هادئة (درجات الأخضر المريح والبيج الدافئ) */
+            --primary: #2D5A27;
+            --secondary: #5B8E7D;
+            --accent: #F4F1EA;
+            --success: #689F38;
+            --danger: #BC4749;
+            --text: #2C3531;
+            --text-light: #6D7275;
+            --bg: #FCFBF7;
+            --card: #FFFFFF;
+            --shadow: 0 4px 12px rgba(45, 90, 39, 0.08);
         }
         [data-theme="dark"] {
-            --primary: #A78BFA;
-            --accent: #374151;
-            --text: #F9FAFB;
-            --text-light: #D1D5DB;
-            --bg: #111827;
-            --card: #1F2937;
-            --shadow: 0 1px 3px rgba(0,0,0,0.5);
+            --primary: #8EB69B;
+            --accent: #2D3A30;
+            --text: #F1F7ED;
+            --text-light: #B2C2B9;
+            --bg: #1B241D;
+            --card: #252F27;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         * {margin:0;padding:0;box-sizing:border-box}
         body {
@@ -37,14 +38,14 @@
             line-height:1.6;
         }
         .header {
-            background:linear-gradient(135deg,#1F2937,#374151);
+            background: linear-gradient(135deg, #2D5A27, #467141);
             padding:15px;
             text-align:center;
             position:sticky;
             top:0;
             z-index:100;
             box-shadow:var(--shadow);
-            border-bottom:1px solid rgba(255,255,255,0.1);
+            border-bottom:2px solid rgba(255,255,255,0.05);
         }
         .header-content {
             max-width:1200px;
@@ -71,7 +72,7 @@
             font-size:24px;
             flex-shrink:0;
             cursor:pointer;
-            box-shadow:0 2px 8px rgba(0,0,0,0.15);
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
         }
         .header h1 {
             color:white;
@@ -80,20 +81,25 @@
             font-family:'Cairo',sans-serif;
         }
         .header p {
-            color:var(--accent);
+            color: #E8F5E9;
             font-size:11px;
+            opacity: 0.9;
         }
         .icon-btn {
             width:40px;
             height:40px;
             border-radius:50%;
-            background:rgba(255,255,255,0.2);
+            background:rgba(255,255,255,0.15);
             border:none;
             color:white;
             cursor:pointer;
             display:flex;
             align-items:center;
             justify-content:center;
+            transition: 0.3s;
+        }
+        .icon-btn:hover {
+            background:rgba(255,255,255,0.25);
         }
         .container {
             max-width:1200px;
@@ -101,40 +107,44 @@
             padding:15px;
         }
         .sync-indicator {
-    position:fixed;
-    bottom:20px;
-    left:20px;
-    background:var(--success);
-    color:white;
-    padding:8px 12px;
-    border-radius:20px;
-    font-size:11px;
-    z-index:1000;
-    display:none;  /* مهم: يجب أن يكون none */
-    align-items:center;
-    gap:6px;
-    box-shadow:var(--shadow-md);
-    opacity: 0;  /* أضف هذا */
-    visibility: hidden;  /* أضف هذا */
-    transition: opacity 0.3s ease, visibility 0.3s ease;  /* أضف هذا */
-}
-.sync-indicator.show {
-    display:flex;
-    opacity: 1;  /* أضف هذا */
-    visibility: visible;  /* أضف هذا */
-}
+            position:fixed;
+            bottom:20px;
+            left:20px;
+            background:var(--success);
+            color:white;
+            padding:8px 12px;
+            border-radius:20px;
+            font-size:11px;
+            z-index:1000;
+            display:none;
+            align-items:center;
+            gap:6px;
+            box-shadow:var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sync-indicator.show {
+            display:flex;
+            opacity: 1;
+            visibility: visible;
+        }
         .case-card {
             background:var(--card);
             border-radius:12px;
             overflow:hidden;
             box-shadow:var(--shadow);
             margin-bottom:15px;
-            border:1px solid var(--accent);
+            border:1px solid rgba(45, 90, 39, 0.05);
+            transition: transform 0.3s;
+        }
+        .case-card:hover {
+            transform: translateY(-3px);
         }
         .case-images {
             position:relative;
             height:220px;
-            background:var(--accent);
+            background:#E0E5DF;
             overflow:hidden;
         }
         .case-image {
@@ -187,9 +197,9 @@
             font-size:11px;
             font-weight:600;
         }
-        .case-status.active {color:#3B82F6}
-        .case-status.urgent {color:#EF4444}
-        .case-status.completed {color:#10B981}
+        .case-status.active {color:#5B8E7D}
+        .case-status.urgent {color:#BC4749}
+        .case-status.completed {color:#2D5A27}
         .case-title {
             font-size:17px;
             font-weight:700;
@@ -213,15 +223,15 @@
         .collected {color:var(--success);font-weight:700}
         .remaining {color:var(--danger);font-weight:700}
         .progress-bar-container {
-            height:6px;
-            background:var(--accent);
+            height:8px;
+            background:#EDF1EE;
             border-radius:6px;
             overflow:hidden;
             margin-bottom:6px;
         }
         .progress-bar {
             height:100%;
-            background:linear-gradient(90deg,var(--primary),var(--secondary));
+            background:linear-gradient(90deg, #2D5A27, #689F38);
             border-radius:6px;
             position:relative;
         }
@@ -238,16 +248,21 @@
             align-items:center;
             justify-content:center;
             gap:6px;
+            transition: 0.3s;
         }
         .btn-primary {
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            background: linear-gradient(135deg, #2D5A27, #5B8E7D);
             color:white;
+        }
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
         }
         .btn-danger {
             background:var(--danger);
             color:white;
         }
-        .btn-small {padding:8px 12px;font-size:11px}
+        .btn-small {padding:8px 12px;font-size:11px;width:auto}
         .modal {
             display:none;
             position:fixed;
@@ -454,6 +469,7 @@
             background:var(--primary);
             margin-bottom:15px;
             border-radius:16px 16px 0 0;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.05);
         }
         .initiative-title {
             color:white;
@@ -516,7 +532,7 @@
                 <button class="btn btn-danger btn-small" onclick="closeAdminPanel()">إغلاق</button>
             </div>
             
-            <div style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:white;padding:15px;border-radius:10px;margin-bottom:20px;font-size:12px">
+            <div style="background:linear-gradient(135deg,#2D5A27,#5B8E7D);color:white;padding:15px;border-radius:10px;margin-bottom:20px;font-size:12px">
                 <div style="font-weight:700;margin-bottom:5px;font-size:14px">☁️ المزامنة السحابية مفعّلة</div>
                 <div style="opacity:0.95">جميع التغييرات تُحفظ تلقائياً في السحابة وتظهر فوراً لجميع المستخدمين</div>
             </div>
@@ -542,12 +558,12 @@
                         <div class="form-group">
                             <label class="form-label">اللون</label>
                             <select class="form-input" id="initColor">
-                                <option value="#7C3AED">موف</option>
+                                <option value="#2D5A27">أخضر غامق</option>
+                                <option value="#5B8E7D">أخضر مزرق</option>
+                                <option value="#689F38">أخضر فاتح</option>
                                 <option value="#6B7280">رمادي</option>
+                                <option value="#BC4749">أحمر</option>
                                 <option value="#1F2937">أسود</option>
-                                <option value="#A78BFA">موف فاتح</option>
-                                <option value="#EF4444">أحمر</option>
-                                <option value="#10B981">أخضر</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
@@ -662,7 +678,6 @@
     <script>
         // ⚙️ إعدادات Worker API - ضع رابط Worker هنا
         const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
-        // 👆 استبدل هذا الرابط برابط Cloudflare Worker الخاص بك
         
         let tg=window.Telegram?.WebApp;
         if(tg){tg.ready();tg.expand()}
@@ -674,46 +689,44 @@
         const currencies={'SDG':'ج.س','USD':'$','SAR':'ر.س','AED':'د.إ','EGP':'ج.م'};
         
         // Sync Status Indicator
-function updateSyncStatus(status) {
-    const indicator = document.getElementById('syncIndicator');
-    if (!indicator) return;
-    
-    const icon = document.getElementById('syncIcon');
-    const text = document.getElementById('syncText');
-    
-    // إزالة class show أولاً
-    indicator.classList.remove('show');
-    
-    const adminPanel = document.getElementById('adminPanel');
-    const isAdminOpen = adminPanel && adminPanel.classList.contains('active');
-    
-    if (status === 'syncing') {
-        indicator.style.background = 'var(--primary)';
-        icon.textContent = '↻';
-        text.textContent = 'جاري المزامنة...';
-        if (isAdminOpen) {
-            indicator.classList.add('show');
+        function updateSyncStatus(status) {
+            const indicator = document.getElementById('syncIndicator');
+            if (!indicator) return;
+            
+            const icon = document.getElementById('syncIcon');
+            const text = document.getElementById('syncText');
+            
+            indicator.classList.remove('show');
+            
+            const adminPanel = document.getElementById('adminPanel');
+            const isAdminOpen = adminPanel && adminPanel.classList.contains('active');
+            
+            if (status === 'syncing') {
+                indicator.style.background = 'var(--primary)';
+                icon.textContent = '↻';
+                text.textContent = 'جاري المزامنة...';
+                if (isAdminOpen) {
+                    indicator.classList.add('show');
+                }
+            } else if (status === 'synced') {
+                indicator.style.background = 'var(--success)';
+                icon.textContent = '✓';
+                text.textContent = 'متزامن';
+                if (isAdminOpen) {
+                    indicator.classList.add('show');
+                    setTimeout(() => {
+                        indicator.classList.remove('show');
+                    }, 2000);
+                }
+            } else if (status === 'error') {
+                indicator.style.background = 'var(--danger)';
+                icon.textContent = '✗';
+                text.textContent = 'خطأ في المزامنة';
+                if (isAdminOpen) {
+                    indicator.classList.add('show');
+                }
+            }
         }
-    } else if (status === 'synced') {
-        indicator.style.background = 'var(--success)';
-        icon.textContent = '✓';
-        text.textContent = 'متزامن';
-        if (isAdminOpen) {
-            indicator.classList.add('show');
-            // إخفاء المؤشر بعد 2 ثانية
-            setTimeout(() => {
-                indicator.classList.remove('show');
-            }, 2000);
-        }
-    } else if (status === 'error') {
-        indicator.style.background = 'var(--danger)';
-        icon.textContent = '✗';
-        text.textContent = 'خطأ في المزامنة';
-        if (isAdminOpen) {
-            indicator.classList.add('show');
-        }
-    }
-}
         
         // Load data from Worker API
         async function loadFromWorker() {
@@ -751,7 +764,6 @@ function updateSyncStatus(status) {
                 console.error('Worker load error:', error);
                 updateSyncStatus('error');
                 
-                // Fallback to localStorage
                 const stored = localStorage.getItem('qataratData');
                 if (stored) {
                     data = { ...data, ...JSON.parse(stored) };
@@ -762,7 +774,6 @@ function updateSyncStatus(status) {
         
         // Save data to Worker API
         async function saveToWorker() {
-            // Always save to localStorage as backup
             try {
                 localStorage.setItem('qataratData', JSON.stringify(data));
             } catch (e) {
@@ -876,7 +887,7 @@ function updateSyncStatus(status) {
                     const pct=Math.min((c.collected/c.target)*100,100);
                     const rem=Math.max(c.target-c.collected,0);
                     const status={'active':'نشطة','urgent':'عاجلة','completed':'مكتملة'}[c.status];
-                    const color={'active':'#3B82F6','urgent':'#EF4444','completed':'#10B981'}[c.status];
+                    const color={'active':'#5B8E7D','urgent':'#BC4749','completed':'#2D5A27'}[c.status];
                     
                     html+=`<div class="case-card" data-id="${c.idx}">
                         <div class="case-images">
@@ -896,10 +907,10 @@ function updateSyncStatus(status) {
                                 <span class="remaining">متبقي: ${fmt(rem)}</span>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="progress-bar" style="width:${pct}%;${init?`background:${init.color}`:''}">${Math.round(pct)}%</div>
+                                <div class="progress-bar" style="width:${pct}%;${init?`background:linear-gradient(90deg, ${init.color}, ${init.color}dd)`:''}">${Math.round(pct)}%</div>
                             </div>
                             <div style="margin-top:8px;font-size:12px;color:var(--text-light)">الهدف: ${fmt(c.target)}</div>
-                            <button class="btn btn-primary" onclick="donate(${c.idx})" style="margin-top:12px;${init?`background:${init.color}`:''}" >❤️ تبرع الآن</button>
+                            <button class="btn btn-primary" onclick="donate(${c.idx})" style="margin-top:12px;${init?`background:linear-gradient(135deg, ${init.color}, ${init.color}dd)`:''}" >❤️ تبرع الآن</button>
                         </div>
                     </div>`;
                 });
@@ -1015,7 +1026,6 @@ function updateSyncStatus(status) {
             await saveToWorker();
             renderCases();
             
-            // Send Telegram notification
             const message = `🎉 <b>تبرع جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
             await sendTelegramNotification(message, receipt);
             
@@ -1098,17 +1108,16 @@ function updateSyncStatus(status) {
         
         function openAdmin(){
             document.getElementById('adminPanel').classList.add('active');
-            document.getElementById('syncIndicator').classList.add('show');
             renderInits();
             renderAllCases();
             renderBanks();
         }
         
-function closeAdminPanel(){
-    document.getElementById('adminPanel').classList.remove('active');
-    // إخفاء مؤشر المزامنة عند إغلاق لوحة التحكم
-    document.getElementById('syncIndicator').classList.remove('show');
-}
+        function closeAdminPanel(){
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('syncIndicator').classList.remove('show');
+        }
+        
         function switchTab(t){
             document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
@@ -1151,7 +1160,7 @@ function closeAdminPanel(){
                                 </div>
                                 <button class="btn btn-danger btn-small" onclick="delCase(${idx})">🗑️</button>
                             </div>
-                            <div class="progress-bar-container"><div class="progress-bar" style="width:${pct}%;background:${init.color}"></div></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg, ${init.color}, ${init.color}dd)"></div></div>
                         </div>`;
                     }).join('')}
                 </div>`;
@@ -1189,7 +1198,7 @@ function closeAdminPanel(){
             
             if(urgent.length>0){
                 html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#EF4444;display:flex;align-items:center;gap:8px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:#BC4749;display:flex;align-items:center;gap:8px">
                         <span>🔴</span>
                         <span>حالات عاجلة (${urgent.length})</span>
                     </h4>
@@ -1202,7 +1211,7 @@ function closeAdminPanel(){
             
             if(active.length>0){
                 html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#3B82F6;display:flex;align-items:center;gap:8px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:#5B8E7D;display:flex;align-items:center;gap:8px">
                         <span>🟢</span>
                         <span>حالات نشطة (${active.length})</span>
                     </h4>
@@ -1215,7 +1224,7 @@ function closeAdminPanel(){
             
             if(completed.length>0){
                 html+=`<div style="margin-bottom:25px">
-                    <h4 style="font-size:15px;margin-bottom:12px;color:#10B981;display:flex;align-items:center;gap:8px">
+                    <h4 style="font-size:15px;margin-bottom:12px;color:#2D5A27;display:flex;align-items:center;gap:8px">
                         <span>✅</span>
                         <span>حالات مكتملة (${completed.length})</span>
                     </h4>
@@ -1232,7 +1241,7 @@ function closeAdminPanel(){
         function renderCaseItem(c,idx){
             const pct=Math.min((c.collected/c.target)*100,100);
             const init=c.initId!==undefined&&data.initiatives&&data.initiatives[c.initId]?data.initiatives[c.initId]:null;
-            const statusColors={'active':'#3B82F6','urgent':'#EF4444','completed':'#10B981'};
+            const statusColors={'active':'#5B8E7D','urgent':'#BC4749','completed':'#2D5A27'};
             const statusNames={'active':'نشطة','urgent':'عاجلة','completed':'مكتملة'};
             
             return`<div style="background:var(--bg);padding:12px;border-radius:10px;margin-bottom:10px;border-right:3px solid ${statusColors[c.status]}">
@@ -1255,7 +1264,7 @@ function closeAdminPanel(){
                         <span style="color:var(--text-light)">${fmt(c.target)}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div class="progress-bar" style="width:${pct}%;${init?`background:${init.color}`:''}">${Math.round(pct)}%</div>
+                        <div class="progress-bar" style="width:${pct}%;${init?`background:linear-gradient(90deg, ${init.color}, ${init.color}dd)`:''}">${Math.round(pct)}%</div>
                     </div>
                 </div>
                 ${c.donations&&c.donations.length>0?`<div style="font-size:11px;color:var(--text-light);margin-top:8px">💚 عدد المتبرعين: ${c.donations.length}</div>`:''}
@@ -1274,7 +1283,7 @@ function closeAdminPanel(){
             document.getElementById('initForm').style.display='block';
             document.getElementById('initName').value='';
             document.getElementById('initDesc').value='';
-            document.getElementById('initColor').value='#7C3AED';
+            document.getElementById('initColor').value='#2D5A27';
             editInitIdx=null;
         }
         
