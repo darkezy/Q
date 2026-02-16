@@ -7,10 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Firebase SDK v9 compat -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
     <style>
         :root {
             --primary: #7C3AED;
@@ -121,12 +117,6 @@
         }
         .sync-indicator.show {
             display:flex;
-        }
-        .sync-indicator.syncing {
-            background:var(--primary);
-        }
-        .sync-indicator.error {
-            background:var(--danger);
         }
         .case-card {
             background:var(--card);
@@ -645,14 +635,6 @@
                     <label class="form-label">كلمة المرور</label>
                     <input type="password" class="form-input" id="adminPass">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Bot Token</label>
-                    <input type="text" class="form-input" id="botToken">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Chat ID</label>
-                    <input type="text" class="form-input" id="chatId">
-                </div>
                 <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
                 <hr style="margin:20px 0">
                 <h4 style="color:var(--primary);margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
@@ -673,39 +655,14 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // Check if Firebase loaded correctly
-        if (typeof firebase === 'undefined') {
-            console.error('Firebase SDK failed to load');
-            alert('خطأ في تحميل Firebase. يرجى التحقق من الاتصال بالإنترنت وإعادة تحميل الصفحة.');
-        }
+        // ⚙️ إعدادات Worker API - ضع رابط Worker هنا
+        const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
+        // 👆 استبدل هذا الرابط برابط Cloudflare Worker الخاص بك
         
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAmXefCI3Ot0VJdxHPp-Hn52gKj4Z9ycH8",
-            authDomain: "qatarat-qat.firebaseapp.com",
-            databaseURL: "https://qatarat-qat-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "qatarat-qat",
-            storageBucket: "qatarat-qat.firebasestorage.app",
-            messagingSenderId: "804999564837",
-            appId: "1:804999564837:web:9ac2451283411c8e6a79cc"
-        };
-
-        // Initialize Firebase with error handling
-        let database, dataRef;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            dataRef = database.ref('qataratData');
-            console.log('Firebase initialized successfully');
-        } catch (error) {
-            console.error('Firebase initialization error:', error);
-            alert('خطأ في الاتصال بقاعدة البيانات. سيتم العمل بوضع محلي فقط.');
-        }
-
         let tg=window.Telegram?.WebApp;
         if(tg){tg.ready();tg.expand()}
         
-        let data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light',botToken:'',chatId:''};
+        let data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light'};
         let editInitIdx=null,editCaseIdx=null,tempImages=[];
         let isSyncing = false;
         
@@ -721,7 +678,6 @@
             
             indicator.className = 'sync-indicator';
             
-            // Show only when admin panel is open
             const adminPanel = document.getElementById('adminPanel');
             if (adminPanel && adminPanel.classList.contains('active')) {
                 indicator.classList.add('show');
@@ -742,10 +698,10 @@
             }
         }
         
-        // Load data from Firebase
-        function loadFromFirebase() {
-            if (!dataRef) {
-                console.warn('Firebase not available, using local storage');
+        // Load data from Worker API
+        async function loadFromWorker() {
+            if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) {
+                console.warn('Worker URL not configured');
                 const stored = localStorage.getItem('qataratData');
                 if (stored) {
                     data = { ...data, ...JSON.parse(stored) };
@@ -755,73 +711,92 @@
             }
             
             updateSyncStatus('syncing');
-            dataRef.once('value').then(snapshot => {
-                const firebaseData = snapshot.val();
-                if (firebaseData) {
-                    data = { ...data, ...firebaseData };
+            
+            try {
+                const response = await fetch(`${WORKER_API_URL}/data`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                
+                const workerData = await response.json();
+                if (workerData && Object.keys(workerData).length > 0) {
+                    data = { ...data, ...workerData };
                     renderCases();
                     renderInits();
                     renderAllCases();
                     renderBanks();
                     applyTheme();
+                    
                     if (document.getElementById('currency')) {
-                        document.getElementById('currency').value = data.currency;
+                        document.getElementById('currency').value = data.currency || 'SDG';
                     }
                 }
                 updateSyncStatus('synced');
-            }).catch(error => {
-                console.error('Firebase load error:', error);
+            } catch (error) {
+                console.error('Worker load error:', error);
                 updateSyncStatus('error');
-                notify('خطأ في تحميل البيانات', 1);
-            });
-        }
-        
-        // Listen to Firebase changes in real-time
-        function listenToFirebase() {
-            if (!dataRef) return;
-            
-            dataRef.on('value', snapshot => {
-                if (isSyncing) return; // Don't update while we're syncing
                 
-                const firebaseData = snapshot.val();
-                if (firebaseData) {
-                    data = { ...data, ...firebaseData };
+                // Fallback to localStorage
+                const stored = localStorage.getItem('qataratData');
+                if (stored) {
+                    data = { ...data, ...JSON.parse(stored) };
                     renderCases();
-                    renderInits();
-                    renderAllCases();
-                    renderBanks();
-                    applyTheme();
                 }
-            });
+            }
         }
         
-        // Save data to Firebase
-        function saveToFirebase() {
-            // Fallback to localStorage if Firebase not available
-            if (!dataRef) {
-                try {
-                    localStorage.setItem('qataratData', JSON.stringify(data));
-                    return true;
-                } catch (e) {
-                    notify('خطأ في الحفظ', 1);
-                    return false;
-                }
+        // Save data to Worker API
+        async function saveToWorker() {
+            // Always save to localStorage as backup
+            try {
+                localStorage.setItem('qataratData', JSON.stringify(data));
+            } catch (e) {
+                console.error('localStorage save error:', e);
+            }
+            
+            if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) {
+                console.warn('Worker URL not configured, data saved locally only');
+                return true;
             }
             
             isSyncing = true;
             updateSyncStatus('syncing');
             
-            dataRef.set(data).then(() => {
+            try {
+                const response = await fetch(`${WORKER_API_URL}/data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Failed to save data');
+                
                 updateSyncStatus('synced');
                 isSyncing = false;
                 return true;
-            }).catch(error => {
-                console.error('Firebase save error:', error);
+            } catch (error) {
+                console.error('Worker save error:', error);
                 updateSyncStatus('error');
-                notify('خطأ في الحفظ', 1);
                 isSyncing = false;
                 return false;
-            });
+            }
+        }
+        
+        // Send Telegram notification
+        async function sendTelegramNotification(message, image = null) {
+            if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) return;
+            
+            try {
+                await fetch(`${WORKER_API_URL}/notify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message, image })
+                });
+            } catch (error) {
+                console.error('Telegram notification error:', error);
+            }
         }
         
         function fmt(n){
@@ -840,7 +815,7 @@
         
         function toggleTheme(){
             data.theme=data.theme==='light'?'dark':'light';
-            saveToFirebase();
+            saveToWorker();
             applyTheme();
         }
         
@@ -848,7 +823,7 @@
             const grid=document.getElementById('casesGrid');
             const empty=document.getElementById('emptyState');
             
-            if(data.cases.length===0){
+            if(!data.cases || data.cases.length===0){
                 grid.innerHTML='';
                 empty.style.display='block';
                 return;
@@ -944,7 +919,7 @@
         
         function donate(id){
             const c=data.cases[id];
-            const banks=data.banks.length>0?data.banks.map(b=>`
+            const banks=data.banks&&data.banks.length>0?data.banks.map(b=>`
                 <div class="bank-account">
                     <div class="bank-info-item"><span class="bank-info-label">البنك:</span><span class="bank-info-value">${b.name}</span></div>
                     <div class="bank-info-item"><span class="bank-info-label">رقم الحساب:</span><span class="bank-info-value">${b.account}</span></div>
@@ -999,7 +974,7 @@
             document.getElementById('donationModal').classList.remove('active');
         }
         
-        function confirmDonate(e,id){
+        async function confirmDonate(e,id){
             e.preventDefault();
             const amt=parseFloat(document.getElementById('donateAmount').value);
             const name=document.getElementById('donorName').value.trim()||'متبرع كريم';
@@ -1020,54 +995,15 @@
                 data.cases[id].status='completed';
             }
             
-            saveToFirebase();
+            await saveToWorker();
             renderCases();
             
-            if(receipt){
-                sendTG(receipt,name,amt,data.cases[id].title);
-            }
+            // Send Telegram notification
+            const message = `🎉 <b>تبرع جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
+            await sendTelegramNotification(message, receipt);
             
             closeDonationModal();
             notify(`شكراً ${name}! تم التحديث 💚`);
-        }
-        
-        async function sendTG(img,name,amt,title){
-            if(!data.botToken||!data.chatId)return;
-            
-            try{
-                const msg=`🎉 تبرع جديد!\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
-                
-                await fetch(`https://api.telegram.org/bot${data.botToken}/sendMessage`,{
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({chat_id:data.chatId,text:msg})
-                });
-                
-                const b64=img.split(',')[1];
-                const bin=atob(b64);
-                const bytes=new Uint8Array(bin.length);
-                for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-                const blob=new Blob([bytes],{type:'image/jpeg'});
-                
-                if(blob.size>10485760){
-                    notify('تم الإرسال (الصورة كبيرة)');
-                    return;
-                }
-                
-                const fd=new FormData();
-                fd.append('chat_id',data.chatId);
-                fd.append('photo',blob,'receipt.jpg');
-                fd.append('caption','📸 إيصال');
-                
-                await fetch(`https://api.telegram.org/bot${data.botToken}/sendPhoto`,{
-                    method:'POST',
-                    body:fd
-                });
-                
-                notify('تم إرسال التفاصيل للأدمن ✅');
-            }catch(e){
-                notify('تم التحديث بنجاح ✅');
-            }
         }
         
         function compress(file,cb){
@@ -1118,7 +1054,7 @@
                         const imported=JSON.parse(e.target.result);
                         if(confirm('هل تريد استبدال جميع البيانات الحالية بالبيانات المستوردة؟')){
                             data=imported;
-                            saveToFirebase();
+                            saveToWorker();
                             renderInits();
                             renderAllCases();
                             renderCases();
@@ -1149,8 +1085,6 @@
             renderInits();
             renderAllCases();
             renderBanks();
-            document.getElementById('botToken').value=data.botToken||'';
-            document.getElementById('chatId').value=data.chatId||'';
         }
         
         function closeAdminPanel(){
@@ -1169,13 +1103,13 @@
             const list=document.getElementById('initList');
             if(!list)return;
             
-            if(data.initiatives.length===0){
+            if(!data.initiatives || data.initiatives.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px">لا توجد مبادرات</p>';
                 return;
             }
             
             list.innerHTML=data.initiatives.map((init,i)=>{
-                const cases=data.cases.filter(c=>c.initId===i);
+                const cases=data.cases?data.cases.filter(c=>c.initId===i):[];
                 return`<div style="margin-bottom:20px;padding:15px;background:var(--bg);border-radius:12px;border-right:4px solid ${init.color}">
                     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
                         <div style="flex:1">
@@ -1211,7 +1145,7 @@
             const list=document.getElementById('allCasesList');
             if(!list)return;
             
-            if(data.cases.length===0){
+            if(!data.cases || data.cases.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px;color:var(--text-light)">لا توجد حالات</p>';
                 return;
             }
@@ -1280,7 +1214,7 @@
         
         function renderCaseItem(c,idx){
             const pct=Math.min((c.collected/c.target)*100,100);
-            const init=c.initId!==undefined&&data.initiatives[c.initId]?data.initiatives[c.initId]:null;
+            const init=c.initId!==undefined&&data.initiatives&&data.initiatives[c.initId]?data.initiatives[c.initId]:null;
             const statusColors={'active':'#3B82F6','urgent':'#EF4444','completed':'#10B981'};
             const statusNames={'active':'نشطة','urgent':'عاجلة','completed':'مكتملة'};
             
@@ -1337,7 +1271,7 @@
             document.getElementById('initForm').scrollIntoView({behavior:'smooth'});
         }
         
-        function saveInitiative(e){
+        async function saveInitiative(e){
             e.preventDefault();
             const init={
                 name:document.getElementById('initName').value,
@@ -1348,21 +1282,24 @@
             if(editInitIdx!==null){
                 data.initiatives[editInitIdx]=init;
             }else{
+                if(!data.initiatives) data.initiatives = [];
                 data.initiatives.push(init);
             }
             
-            saveToFirebase();
+            await saveToWorker();
             document.getElementById('initForm').style.display='none';
             renderInits();
             renderCases();
             notify('تم الحفظ');
         }
         
-        function delInit(i){
+        async function delInit(i){
             if(!confirm('حذف المبادرة؟'))return;
             data.initiatives.splice(i,1);
-            data.cases.forEach(c=>{if(c.initId>i)c.initId--});
-            saveToFirebase();
+            if(data.cases){
+                data.cases.forEach(c=>{if(c.initId>i)c.initId--});
+            }
+            await saveToWorker();
             renderInits();
             renderCases();
             notify('تم الحذف');
@@ -1400,7 +1337,7 @@
             ).join('');
         }
         
-        function saveCase(e){
+        async function saveCase(e){
             e.preventDefault();
             
             if(tempImages.length===0){
@@ -1421,10 +1358,11 @@
             if(editCaseIdx!==null){
                 data.cases[editCaseIdx]=c;
             }else{
+                if(!data.cases) data.cases = [];
                 data.cases.push(c);
             }
             
-            saveToFirebase();
+            await saveToWorker();
             document.getElementById('caseForm').style.display='none';
             renderInits();
             renderAllCases();
@@ -1432,9 +1370,9 @@
             notify('تم الحفظ');
         }
         
-        function delCase(i){
+        async function delCase(i){
             data.cases.splice(i,1);
-            saveToFirebase();
+            await saveToWorker();
             renderInits();
             renderAllCases();
             renderCases();
@@ -1445,7 +1383,7 @@
             const list=document.getElementById('bankList');
             if(!list)return;
             
-            if(data.banks.length===0){
+            if(!data.banks || data.banks.length===0){
                 list.innerHTML='<p style="text-align:center;padding:20px">لا توجد حسابات</p>';
                 return;
             }
@@ -1469,47 +1407,46 @@
             document.getElementById('bankIban').value='';
         }
         
-        function saveBank(e){
+        async function saveBank(e){
             e.preventDefault();
+            if(!data.banks) data.banks = [];
             data.banks.push({
                 name:document.getElementById('bankName').value,
                 account:document.getElementById('bankAccount').value,
                 owner:document.getElementById('bankOwner').value,
                 iban:document.getElementById('bankIban').value
             });
-            saveToFirebase();
+            await saveToWorker();
             document.getElementById('bankForm').style.display='none';
             renderBanks();
             notify('تم الحفظ');
         }
         
-        function delBank(i){
+        async function delBank(i){
             if(!confirm('حذف الحساب؟'))return;
             data.banks.splice(i,1);
-            saveToFirebase();
+            await saveToWorker();
             renderBanks();
             notify('تم الحذف');
         }
         
-        function saveSettings(){
+        async function saveSettings(){
             const p=document.getElementById('adminPass').value;
             const c=document.getElementById('currency').value;
             
             if(p&&p.length>=4)data.password=p;
             if(c)data.currency=c;
-            data.botToken=document.getElementById('botToken').value.trim();
-            data.chatId=document.getElementById('chatId').value.trim();
             
-            saveToFirebase();
+            await saveToWorker();
             renderCases();
             notify('تم الحفظ');
         }
         
-        function clearAll(){
+        async function clearAll(){
             if(!confirm('حذف كل شيء؟'))return;
             if(!confirm('تأكيد نهائي؟'))return;
-            data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light',botToken:'',chatId:''};
-            saveToFirebase();
+            data={initiatives:[],cases:[],banks:[],password:'admin123',currency:'SDG',theme:'light'};
+            await saveToWorker();
             renderInits();
             renderCases();
             renderBanks();
@@ -1548,8 +1485,7 @@
         document.getElementById('themeToggle').addEventListener('click',toggleTheme);
         
         // Initialize app
-        loadFromFirebase();
-        listenToFirebase();
+        loadFromWorker();
         renderCases();
     </script>
 </body>
