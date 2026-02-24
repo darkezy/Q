@@ -9,44 +9,46 @@
     
     <style>
         :root {
-            /* نظام ألوان Cloudflare - الوضع النهاري */
-            --bg: #FFFFFF;
-            --surface: #FAFAFA;
-            --text: #1F2937;
-            --text-secondary: #6B7280;
-            --border: #E5E7EB;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            /* نظام ألوان Intella Ziila - الوضع النهاري (ألوان مسطحة وبدون تدرجات) */
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text: #0F172A;
+            --text-secondary: #64748B;
+            --border: #E2E8F0;
+            --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+            --shadow-hover: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
             
-            /* ألوان المبادرات - Cloudflare Style */
+            /* اللون الأساسي المستوحى من Intella */
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-light: rgba(79, 70, 229, 0.1);
+            
+            /* ألوان المبادرات - مسطحة وواضحة */
             --green: #10B981;
-            --orange: #F59E0B;
+            --orange: #f05100;
             --blue: #3B82F6;
             --yellow: #EAB308;
-            --red: #DC2626;
+            --red: #EF4444;
             --purple: #8B5CF6;
             
             /* حالات النظام */
             --success: #10B981;
             --warning: #F59E0B;
-            --danger: #DC2626;
+            --danger: #EF4444;
         }
         
         [data-theme="dark"] {
-            /* نظام ألوان Cloudflare - الوضع الليلي */
-            --bg: #111827;
-            --surface: #1F2937;
-            --text: #F9FAFB;
-            --text-secondary: #9CA3AF;
-            --border: #374151;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            --bg: #104e64;
+            --surface: #151C2C;
+            --text: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border: #1E293B;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             
-            /* ألوان المبادرات تظل كما هي */
-            --green: #10B981;
-            --orange: #F59E0B;
-            --blue: #3B82F6;
-            --yellow: #EAB308;
-            --red: #DC2626;
-            --purple: #8B5CF6;
+            --primary: #6366F1;
+            --primary-hover: #818CF8;
+            --primary-light: rgba(99, 102, 241, 0.15);
         }
         
         * {
@@ -55,22 +57,27 @@
             box-sizing: border-box;
         }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             font-family: 'Tajawal', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .header {
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
+            background: #104e64;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 16px;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(8px);
         }
         
         .header-content {
@@ -85,18 +92,24 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
         
         .logo {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            font-size: 20px;
+            transition: transform 0.2s ease, background 0.2s ease;
+            font-size: 22px;
+        }
+        
+        .logo:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
         
         .logo:active {
@@ -106,33 +119,35 @@
         .header-text h1 {
             font-family: 'Cairo', sans-serif;
             font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.3px;
         }
         
         .header-text p {
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
         }
         
         .theme-toggle {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            font-size: 16px;
+            font-size: 18px;
         }
         
         .theme-toggle:hover {
-            background: var(--bg);
-            border-color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
         
         .theme-toggle:active {
@@ -140,54 +155,59 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 24px 16px;
+            padding: 40px 20px;
         }
         
         .sync-indicator {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 12px;
+            bottom: 24px;
+            left: 24px;
+            background: var(--text);
+            color: var(--bg);
+            padding: 10px 16px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
             z-index: 1000;
             display: none;
             align-items: center;
-            gap: 6px;
-            box-shadow: var(--shadow);
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
         }
         
         .sync-indicator.show {
             display: flex;
             opacity: 1;
             visibility: visible;
+            transform: translateY(0);
         }
         
         .case-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            background: var(--surface);
+            border: 2px solid #104e64;
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 16px;
-            transition: border-color 0.2s ease;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 16px -4px rgba(16, 78, 100, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
         
         .case-card:hover {
-            border-color: var(--text-secondary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -4px rgba(16, 78, 100, 0.25);
+            border-color: #0d3e50;
         }
         
         .case-images {
             position: relative;
-            height: 240px;
-            background: var(--surface);
+            height: 280px;
+            background: linear-gradient(135deg, var(--bg) 0%, #e8f4f8 100%);
             overflow: hidden;
         }
         
@@ -206,142 +226,205 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(16, 78, 100, 0.85);
+            backdrop-filter: blur(8px);
             color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
         }
         
         .image-nav:hover {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(16, 78, 100, 1);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 78, 100, 0.4);
         }
         
-        .image-nav.prev { left: 8px; }
-        .image-nav.next { right: 8px; }
+        .image-nav.prev { left: 12px; }
+        .image-nav.next { right: 12px; }
         
         .indicators {
             position: absolute;
-            bottom: 12px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            background: rgba(16, 78, 100, 0.85);
+            padding: 8px 14px;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .indicator {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
         }
         
         .indicator.active {
             background: white;
-            width: 20px;
-            border-radius: 3px;
+            width: 24px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
         }
         
         .case-content {
-            padding: 20px;
+            padding: 28px;
         }
         
         .case-status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
             font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
         .case-status.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--blue);
+            background: var(--primary-light);
+            color: var(--primary);
         }
         
         .case-status.urgent {
-            background: rgba(220, 38, 38, 0.1);
-            color: var(--red);
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
         
         .case-status.completed {
             background: rgba(16, 185, 129, 0.1);
-            color: var(--green);
+            color: var(--success);
         }
         
         .case-status.closed {
-            background: rgba(107, 114, 128, 0.1);
+            background: var(--border);
             color: var(--text-secondary);
         }
         
         .case-title {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             font-family: 'Cairo', sans-serif;
             color: var(--text);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            letter-spacing: -0.5px;
         }
         
         .case-description {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-secondary);
-            margin-bottom: 16px;
-            line-height: 1.5;
+            margin-bottom: 28px;
+            line-height: 1.7;
         }
         
         .progress-info {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
         
         .collected {
-            color: var(--green);
-            font-weight: 600;
+            color: var(--text);
+            font-weight: 800;
         }
         
         .remaining {
             color: var(--text-secondary);
+            font-weight: 500;
         }
         
         .progress-bar-container {
-            height: 6px;
-            background: var(--surface);
-            border-radius: 3px;
+            height: 10px;
+            background: var(--border);
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
         }
         
         .progress-bar {
             height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s ease;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .btn {
             width: 100%;
-            padding: 10px 16px;
+            padding: 16px 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             font-family: 'Tajawal', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn:active {
@@ -349,33 +432,46 @@
         }
         
         .btn-primary {
-            background: var(--text);
-            color: var(--bg);
+            background: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
         
-        .btn-primary:hover {
-            opacity: 0.9;
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+            transform: translateY(-2px);
         }
         
         .btn-primary:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
+            background: var(--border);
+            color: var(--text-secondary);
         }
         
         .btn-danger {
-            background: var(--red);
+            background: var(--danger);
             color: white;
         }
         
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+        
         .btn-secondary {
-            background: var(--surface);
+            background: var(--bg);
             color: var(--text);
             border: 1px solid var(--border);
         }
         
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
         .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: 8px 16px;
+            font-size: 13px;
             width: auto;
         }
         
@@ -386,7 +482,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             padding: 16px;
         }
@@ -395,60 +492,74 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .modal-content {
-            background: var(--bg);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 500px;
+            border-radius: 24px;
+            padding: 36px;
+            max-width: 540px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
         .modal-close {
             position: absolute;
-            top: 16px;
-            left: 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 24px;
             transition: all 0.2s ease;
         }
         
         .modal-close:hover {
-            background: var(--border);
+            background: var(--bg);
+            color: var(--text);
         }
         
         .modal-title {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             font-family: 'Cairo', sans-serif;
             color: var(--text);
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-right: 8px;
         }
         
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         
         .form-label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
             color: var(--text);
         }
         
@@ -456,40 +567,44 @@
         .form-textarea,
         .form-select {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            padding: 16px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
             font-family: 'Tajawal', sans-serif;
-            font-size: 14px;
+            font-size: 15px;
             background: var(--bg);
             color: var(--text);
-            transition: border-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .form-input:focus,
         .form-textarea:focus,
         .form-select:focus {
             outline: none;
-            border-color: var(--text);
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            transform: translateY(-2px);
         }
         
         .form-textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
         }
         
         .file-upload {
             border: 2px dashed var(--border);
-            border-radius: 6px;
-            padding: 24px;
+            border-radius: 8px;
+            padding: 32px 24px;
             text-align: center;
             cursor: pointer;
-            background: var(--surface);
-            transition: border-color 0.2s ease;
+            background: var(--bg);
+            transition: all 0.2s ease;
         }
         
         .file-upload:hover {
-            border-color: var(--text-secondary);
+            border-color: var(--primary);
+            background: var(--primary-light);
         }
         
         .file-input {
@@ -499,14 +614,14 @@
         .preview-images {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 12px;
+            gap: 12px;
+            margin-top: 16px;
         }
         
         .preview-image {
             position: relative;
             aspect-ratio: 1;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
         }
@@ -521,14 +636,14 @@
             position: absolute;
             top: 4px;
             right: 4px;
-            background: var(--red);
+            background: var(--danger);
             color: white;
             border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -553,41 +668,42 @@
         .admin-content {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 32px 20px;
         }
         
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
             border-bottom: 1px solid var(--border);
         }
         
         .admin-header h2 {
             font-family: 'Cairo', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             color: var(--text);
         }
         
         .admin-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 32px;
             border-bottom: 1px solid var(--border);
             overflow-x: auto;
+            padding-bottom: 4px;
         }
         
         .admin-tab {
-            padding: 12px 16px;
+            padding: 12px 20px;
             background: transparent;
             border: none;
-            border-bottom: 2px solid transparent;
+            border-bottom: 3px solid transparent;
             font-family: 'Tajawal', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 15px;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -599,12 +715,13 @@
         }
         
         .admin-tab.active {
-            color: var(--text);
-            border-bottom-color: var(--text);
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
         
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
         
         .tab-content.active {
@@ -614,49 +731,72 @@
         .bank-account {
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 6px;
-            margin-bottom: 12px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .bank-account:hover {
+            border-color: var(--text-secondary);
         }
         
         .bank-info-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
-            font-size: 13px;
+            font-size: 14px;
         }
         
         .bank-info-item:last-child {
             border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .bank-info-item:first-child {
+            padding-top: 0;
         }
         
         .bank-info-label {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-secondary);
         }
         
         .bank-info-value {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text);
             word-break: break-all;
+            text-align: left;
         }
         
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 24px;
+            right: 24px;
             background: var(--surface);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             color: var(--text);
-            padding: 12px 16px;
-            border-radius: 6px;
-            box-shadow: var(--shadow);
+            padding: 18px 24px;
+            border-radius: 12px;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
             z-index: 3000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            font-size: 14px;
-            max-width: calc(100% - 40px);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 15px;
+            font-weight: 600;
+            max-width: calc(100% - 48px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
         }
         
         .notification.show {
@@ -664,49 +804,81 @@
         }
         
         .notification.success {
-            border-color: var(--green);
-            color: var(--green);
+            border-right: 4px solid var(--success);
+            color: var(--success);
         }
         
         .notification.error {
-            border-color: var(--red);
-            color: var(--red);
+            border-right: 4px solid var(--danger);
+            color: var(--danger);
         }
         
         .initiative-header {
-            padding: 20px;
-            border-radius: 8px 8px 0 0;
+            padding: 28px;
+            border-radius: 20px 20px 0 0;
             margin-bottom: 0;
-            border: 1px solid;
+            border: 2px solid #104e64;
             border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .initiative-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 78, 100, 0.1) 0%, transparent 100%);
+            pointer-events: none;
         }
         
         .initiative-title {
             font-family: 'Cairo', sans-serif;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             color: white;
+            position: relative;
+            z-index: 1;
         }
         
         .initiative-desc {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
         
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 100px 32px;
             color: var(--text-secondary);
+            background: var(--surface);
+            border-radius: 24px;
+            border: 2px dashed var(--border);
         }
         
         .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
+            font-size: 72px;
+            margin-bottom: 24px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
         }
         
-        /* ألوان المبادرات */
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
         .color-green { background-color: var(--green); border-color: var(--green); }
         .color-orange { background-color: var(--orange); border-color: var(--orange); }
         .color-blue { background-color: var(--blue); border-color: var(--blue); }
@@ -716,19 +888,49 @@
         
         @media (max-width: 768px) {
             .header {
-                padding: 12px;
+                padding: 14px 16px;
             }
-            
             .header-text h1 {
                 font-size: 16px;
             }
-            
             .container {
-                padding: 16px;
+                padding: 24px 16px;
             }
-            
+            .case-images {
+                height: 240px;
+            }
+            .case-content {
+                padding: 20px;
+            }
+            .case-title {
+                font-size: 20px;
+            }
+            .modal-content {
+                padding: 24px;
+                border-radius: 20px;
+                margin: 16px;
+            }
+            .btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+            .notification {
+                right: 16px;
+                top: 16px;
+                max-width: calc(100% - 32px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .case-card {
+                margin-bottom: 20px;
+            }
             .case-images {
                 height: 200px;
+            }
+            .image-nav {
+                width: 36px;
+                height: 36px;
             }
         }
     </style>
@@ -783,8 +985,8 @@
             </div>
             
             <div id="initTab" class="tab-content active">
-                <div id="initForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-                    <h3 style="margin-bottom:16px;font-size:16px">إضافة مبادرة</h3>
+                <div id="initForm" style="display:none;margin-bottom:24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px">
+                    <h3 style="margin-bottom:20px;font-size:18px;font-family:'Cairo',sans-serif;color:var(--text)">إضافة مبادرة</h3>
                     <form onsubmit="saveInitiative(event)">
                         <div class="form-group">
                             <label class="form-label">اسم المبادرة *</label>
@@ -798,7 +1000,7 @@
                             <label class="form-label">اللون</label>
                             <select class="form-select" id="initColor">
                                 <option value="#10B981">🟢 أخضر هادئ</option>
-                                <option value="#F59E0B">🟠 برتقالي هادئ</option>
+                                <option value="#f05100">🟠 برتقالي هادئ</option>
                                 <option value="#3B82F6">🔵 سماوي هادئ</option>
                                 <option value="#EAB308">🟡 أصفر هادئ</option>
                                 <option value="#DC2626">🔴 أحمر داكن</option>
@@ -809,8 +1011,8 @@
                     </form>
                 </div>
                 
-                <div id="caseForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-                    <h3 style="margin-bottom:16px;font-size:16px" id="caseFormTitle">إضافة حالة</h3>
+                <div id="caseForm" style="display:none;margin-bottom:24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px">
+                    <h3 style="margin-bottom:20px;font-size:18px;font-family:'Cairo',sans-serif;color:var(--text)" id="caseFormTitle">إضافة حالة</h3>
                     <form onsubmit="saveCase(event)">
                         <div class="form-group">
                             <label class="form-label">عنوان الحالة *</label>
@@ -840,7 +1042,7 @@
                             <label class="form-label">صور الحالة *</label>
                             <div class="file-upload" onclick="document.getElementById('caseImages').click()">
                                 <input type="file" class="file-input" id="caseImages" multiple accept="image/*">
-                                <p style="font-size:13px">📷 اضغط لرفع الصور</p>
+                                <p style="font-size:14px;color:var(--text-secondary)">📷 اضغط لرفع الصور</p>
                             </div>
                             <div class="preview-images" id="previewImages"></div>
                         </div>
@@ -849,18 +1051,18 @@
                     </form>
                 </div>
                 
-                <button class="btn btn-primary" onclick="showInitForm()" style="margin-bottom:16px">+ إضافة مبادرة</button>
+                <button class="btn btn-primary" onclick="showInitForm()" style="margin-bottom:20px">+ إضافة مبادرة</button>
                 <div id="initList"></div>
             </div>
             
             <div id="casesTab" class="tab-content">
-                <h3 style="margin-bottom:16px;font-size:16px">جميع الحالات</h3>
+                <h3 style="margin-bottom:20px;font-size:18px;font-family:'Cairo',sans-serif;color:var(--text)">جميع الحالات</h3>
                 <div id="allCasesList"></div>
             </div>
             
             <div id="bankTab" class="tab-content">
-                <div id="bankForm" style="display:none;margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-                    <h3 style="margin-bottom:16px;font-size:16px">إضافة حساب بنكي</h3>
+                <div id="bankForm" style="display:none;margin-bottom:24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px">
+                    <h3 style="margin-bottom:20px;font-size:18px;font-family:'Cairo',sans-serif;color:var(--text)">إضافة حساب بنكي</h3>
                     <form onsubmit="saveBank(event)">
                         <div class="form-group">
                             <label class="form-label">اسم البنك *</label>
@@ -881,42 +1083,48 @@
                         <button type="submit" class="btn btn-primary">حفظ</button>
                     </form>
                 </div>
-                <button class="btn btn-primary" onclick="showBankForm()" style="margin-bottom:16px">+ إضافة حساب</button>
+                <button class="btn btn-primary" onclick="showBankForm()" style="margin-bottom:20px">+ إضافة حساب</button>
                 <div id="bankList"></div>
             </div>
             
             <div id="settingsTab" class="tab-content">
-                <div class="form-group">
-                    <label class="form-label">العملة</label>
-                    <select class="form-select" id="currency">
-                        <option value="SDG">جنيه سوداني (ج.س)</option>
-                        <option value="USD">دولار ($)</option>
-                        <option value="SAR">ريال (ر.س)</option>
-                        <option value="AED">درهم (د.إ)</option>
-                        <option value="EGP">جنيه (ج.م)</option>
-                    </select>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+                    <div class="form-group">
+                        <label class="form-label">العملة</label>
+                        <select class="form-select" id="currency">
+                            <option value="SDG">جنيه سوداني (ج.س)</option>
+                            <option value="USD">دولار ($)</option>
+                            <option value="SAR">ريال (ر.س)</option>
+                            <option value="AED">درهم (د.إ)</option>
+                            <option value="EGP">جنيه (ج.م)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-input" id="adminPass">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">كلمة المرور</label>
-                    <input type="password" class="form-input" id="adminPass">
+                
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+                    <h4 style="margin-bottom:12px;font-size:16px;font-family:'Cairo',sans-serif;color:var(--text)">💾 النسخ الاحتياطي</h4>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6">
+                        البيانات محفوظة في السحابة. يمكنك تصدير نسخة احتياطية للأمان.
+                    </p>
+                    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+                        <button class="btn btn-secondary" onclick="exportData()" style="flex:1">📥 تصدير</button>
+                        <button class="btn btn-secondary" onclick="importData()" style="flex:1">📤 استيراد</button>
+                    </div>
+                    <input type="file" id="importFile" accept=".json" style="display:none">
                 </div>
-                <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
                 
-                <hr style="margin:24px 0;border:none;border-top:1px solid var(--border)">
-                
-                <h4 style="margin-bottom:12px;font-size:15px">💾 النسخ الاحتياطي</h4>
-                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
-                    البيانات محفوظة في السحابة. يمكنك تصدير نسخة احتياطية للأمان.
-                </p>
-                <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-                    <button class="btn btn-secondary" onclick="exportData()" style="flex:1">📥 تصدير</button>
-                    <button class="btn btn-secondary" onclick="importData()" style="flex:1">📤 استيراد</button>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px">
+                    <h4 style="margin-bottom:12px;font-size:16px;font-family:'Cairo',sans-serif;color:var(--danger)">⚠️ منطقة الخطر</h4>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6">
+                        هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات نهائياً.
+                    </p>
+                    <button class="btn btn-danger" onclick="clearAll()">حذف جميع البيانات</button>
                 </div>
-                <input type="file" id="importFile" accept=".json" style="display:none">
-                
-                <hr style="margin:24px 0;border:none;border-top:1px solid var(--border)">
-                
-                <button class="btn btn-danger" onclick="clearAll()">حذف جميع البيانات</button>
             </div>
         </div>
     </div>
@@ -953,13 +1161,12 @@
         
         const colorClasses = {
             '#10B981': 'green',
-            '#F59E0B': 'orange',
+            '#f05100': 'orange',
             '#3B82F6': 'blue',
             '#EAB308': 'yellow',
             '#DC2626': 'red',
             '#8B5CF6': 'purple'
         };
-        
         function updateSyncStatus(status) {
             const indicator = document.getElementById('syncIndicator');
             if (!indicator) return;
@@ -1130,14 +1337,14 @@
                 const cases = byInit[id];
                 
                 if (init) {
-                    html += `<div style="margin-bottom:24px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+                    html += `<div style="margin-bottom:32px;border:2px solid #104e64;border-radius:20px;overflow:hidden;box-shadow:0 8px 16px -4px rgba(16, 78, 100, 0.15)">
                         <div class="initiative-header color-${colorClasses[init.color]}">
                             <div>
                                 <div class="initiative-title">${init.name}</div>
                                 <div class="initiative-desc">${init.desc}</div>
                             </div>
                         </div>
-                        <div style="padding:16px;background:var(--bg)">`;
+                        <div style="padding:20px;background:var(--bg);border-top:2px solid #104e64">`;
                 } else {
                     html += `<div style="margin-bottom:24px">`;
                 }
@@ -1843,7 +2050,6 @@
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         
         loadFromWorker();
-        renderCases();
     </script>
 </body>
 </html>
