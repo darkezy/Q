@@ -9,7 +9,6 @@
     
     <style>
         :root {
-            /* نظام ألوان Intella Ziila - الوضع النهاري (ألوان مسطحة وبدون تدرجات) */
             --bg: #F8FAFC;
             --surface: #FFFFFF;
             --text: #0F172A;
@@ -17,13 +16,13 @@
             --border: #E2E8F0;
             --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
             --shadow-hover: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+            --header-bg: #104e64;
+            --card-border: #104e64;
             
-            /* اللون الأساسي المستوحى من Intella */
             --primary: #4F46E5;
             --primary-hover: #4338CA;
             --primary-light: rgba(79, 70, 229, 0.1);
             
-            /* ألوان المبادرات - مسطحة وواضحة */
             --green: #10B981;
             --orange: #f05100;
             --blue: #3B82F6;
@@ -31,20 +30,21 @@
             --red: #EF4444;
             --purple: #8B5CF6;
             
-            /* حالات النظام */
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
         }
         
         [data-theme="dark"] {
-            --bg: #0d3e4f;
-            --surface: #104e64;
+            --bg: #0a0a0a;
+            --surface: #111111;
             --text: #F8FAFC;
             --text-secondary: #94A3B8;
-            --border: #1a5f7a;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --border: #222222;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+            --header-bg: #0a0a0a;
+            --card-border: #0a0a0a;
             
             --primary: #6366F1;
             --primary-hover: #818CF8;
@@ -72,7 +72,7 @@
         }
         
         .header {
-            background: #104e64;
+            background: var(--header-bg);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 16px;
             position: sticky;
@@ -143,6 +143,7 @@
             justify-content: center;
             transition: all 0.2s ease;
             font-size: 18px;
+            flex-shrink: 0;
         }
         
         .theme-toggle:hover {
@@ -190,7 +191,7 @@
         
         .case-card {
             background: var(--surface);
-            border: 2px solid #104e64;
+            border: 2px solid var(--card-border);
             border-radius: 20px;
             overflow: hidden;
             margin-bottom: 24px;
@@ -295,7 +296,6 @@
             gap: 6px;
             padding: 8px 16px;
             border-radius: 8px;
-            font-size: 13px;
             font-weight: 700;
             margin-bottom: 20px;
             letter-spacing: 0.3px;
@@ -1146,14 +1146,6 @@
             'EGP': 'ج.م'
         };
         
-        const colorClasses = {
-            '#10B981': 'green',
-            '#f05100': 'orange',
-            '#3B82F6': 'blue',
-            '#EAB308': 'yellow',
-            '#DC2626': 'red',
-            '#8B5CF6': 'purple'
-        };
         function updateSyncStatus(status) {
             const indicator = document.getElementById('syncIndicator');
             if (!indicator) return;
