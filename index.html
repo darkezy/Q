@@ -38,13 +38,13 @@
         }
         
         [data-theme="dark"] {
-            --bg: #104e64;
-            --surface: #151C2C;
+            --bg: #0d3e4f;
+            --surface: #104e64;
             --text: #F8FAFC;
             --text-secondary: #94A3B8;
-            --border: #1E293B;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --border: #1a5f7a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
             
             --primary: #6366F1;
             --primary-hover: #818CF8;
@@ -817,21 +817,8 @@
             padding: 28px;
             border-radius: 20px 20px 0 0;
             margin-bottom: 0;
-            border: 2px solid #104e64;
-            border-bottom: none;
             position: relative;
             overflow: hidden;
-        }
-        
-        .initiative-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(16, 78, 100, 0.1) 0%, transparent 100%);
-            pointer-events: none;
         }
         
         .initiative-title {
@@ -945,7 +932,7 @@
                     <p>كل قطرة تصنع فرقاً</p>
                 </div>
             </div>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
+            <button class="theme-toggle" id="themeToggle">◐</button>
         </div>
     </div>
 
@@ -1294,10 +1281,8 @@
         function applyTheme() {
             if (data.theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('themeToggle').textContent = '☀️';
             } else {
                 document.documentElement.removeAttribute('data-theme');
-                document.getElementById('themeToggle').textContent = '🌙';
             }
         }
         
@@ -1337,14 +1322,14 @@
                 const cases = byInit[id];
                 
                 if (init) {
-                    html += `<div style="margin-bottom:32px;border:2px solid #104e64;border-radius:20px;overflow:hidden;box-shadow:0 8px 16px -4px rgba(16, 78, 100, 0.15)">
-                        <div class="initiative-header color-${colorClasses[init.color]}">
+                    html += `<div style="margin-bottom:32px;border:3px solid ${init.color};border-radius:20px;overflow:hidden;box-shadow:0 8px 16px -4px ${init.color}40;background:${init.color}">
+                        <div class="initiative-header" style="background:${init.color};border:none">
                             <div>
                                 <div class="initiative-title">${init.name}</div>
                                 <div class="initiative-desc">${init.desc}</div>
                             </div>
                         </div>
-                        <div style="padding:20px;background:var(--bg);border-top:2px solid #104e64">`;
+                        <div style="padding:20px;background:${init.color}15">`;
                 } else {
                     html += `<div style="margin-bottom:24px">`;
                 }
