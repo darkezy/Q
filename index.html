@@ -19,20 +19,20 @@
             --header-bg: #104e64;
             --card-border: #104e64;
             
-            --primary: #4F46E5;
-            --primary-hover: #4338CA;
-            --primary-light: rgba(79, 70, 229, 0.1);
+            --primary: #0e7490;
+            --primary-hover: #0c6280;
+            --primary-light: rgba(14, 116, 144, 0.1);
             
-            --green: #10B981;
-            --orange: #f05100;
-            --blue: #3B82F6;
-            --yellow: #EAB308;
-            --red: #EF4444;
-            --purple: #8B5CF6;
+            --green: #4a7c6f;
+            --orange: #8a5a3a;
+            --blue: #3a5f7a;
+            --yellow: #7a6a2e;
+            --red: #7a3a3a;
+            --purple: #5a4a7a;
             
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
+            --success: #4a7c6f;
+            --warning: #7a6a2e;
+            --danger: #7a3a3a;
         }
         
         [data-theme="dark"] {
@@ -46,9 +46,9 @@
             --header-bg: #0a0a0a;
             --card-border: #0a0a0a;
             
-            --primary: #6366F1;
-            --primary-hover: #818CF8;
-            --primary-light: rgba(99, 102, 241, 0.15);
+            --primary: #22d3ee;
+            --primary-hover: #06b6d4;
+            --primary-light: rgba(34, 211, 238, 0.12);
         }
         
         * {
@@ -191,18 +191,17 @@
         
         .case-card {
             background: var(--surface);
-            border: 2px solid var(--card-border);
+            border: none;
             border-radius: 20px;
             overflow: hidden;
             margin-bottom: 24px;
-            box-shadow: 0 8px 16px -4px rgba(16, 78, 100, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .case-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px -4px rgba(16, 78, 100, 0.25);
-            border-color: #0d3e50;
+            box-shadow: var(--shadow-hover);
         }
         
         .case-images {
@@ -434,12 +433,12 @@
         .btn-primary {
             background: var(--primary);
             color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 4px 12px rgba(14, 116, 144, 0.25);
         }
         
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-hover);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+            box-shadow: 0 6px 20px rgba(14, 116, 144, 0.4);
             transform: translateY(-2px);
         }
         
@@ -456,7 +455,7 @@
         }
         
         .btn-danger:hover {
-            background: #DC2626;
+            background: #5e2a2a;
         }
         
         .btn-secondary {
@@ -986,12 +985,12 @@
                         <div class="form-group">
                             <label class="form-label">اللون</label>
                             <select class="form-select" id="initColor">
-                                <option value="#10B981">🟢 أخضر هادئ</option>
-                                <option value="#f05100">🟠 برتقالي هادئ</option>
-                                <option value="#3B82F6">🔵 سماوي هادئ</option>
-                                <option value="#EAB308">🟡 أصفر هادئ</option>
-                                <option value="#DC2626">🔴 أحمر داكن</option>
-                                <option value="#8B5CF6">🟣 موف هادئ</option>
+                                <option value="#4a7c6f">🟢 أخضر مكتوم</option>
+                                <option value="#8a5a3a">🟠 برتقالي مكتوم</option>
+                                <option value="#3a5f7a">🔵 سماوي مكتوم</option>
+                                <option value="#7a6a2e">🟡 أصفر مكتوم</option>
+                                <option value="#7a3a3a">🔴 أحمر مكتوم</option>
+                                <option value="#5a4a7a">🟣 موف مكتوم</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
@@ -1774,7 +1773,7 @@
             document.getElementById('initForm').style.display = 'block';
             document.getElementById('initName').value = '';
             document.getElementById('initDesc').value = '';
-            document.getElementById('initColor').value = '#10B981';
+            document.getElementById('initColor').value = '#4a7c6f';
             editInitIdx = null;
         }
         
