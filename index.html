@@ -23,16 +23,16 @@
             --primary-hover: #0c6280;
             --primary-light: rgba(14, 116, 144, 0.1);
             
-            --green: #4a7c6f;
-            --orange: #8a5a3a;
-            --blue: #3a5f7a;
-            --yellow: #7a6a2e;
-            --red: #7a3a3a;
-            --purple: #5a4a7a;
+            --green: #00ffb3;
+            --orange: #ff6b2b;
+            --blue: #00b4ff;
+            --yellow: #ffe600;
+            --red: #ff2d55;
+            --purple: #bf5fff;
             
-            --success: #4a7c6f;
-            --warning: #7a6a2e;
-            --danger: #7a3a3a;
+            --success: #00ffb3;
+            --warning: #ffe600;
+            --danger: #ff2d55;
         }
         
         [data-theme="dark"] {
@@ -834,7 +834,14 @@
             line-height: 1.6;
             position: relative;
             z-index: 1;
-            opacity: 0.75;
+        }
+        
+        .init-text {
+            color: #0a0a0a;
+        }
+        
+        [data-theme="dark"] .init-text {
+            color: #ffffff;
         }
         
         .empty-state {
@@ -984,12 +991,12 @@
                         <div class="form-group">
                             <label class="form-label">اللون</label>
                             <select class="form-select" id="initColor">
-                                <option value="#4a7c6f">🟢 أخضر مكتوم</option>
-                                <option value="#8a5a3a">🟠 برتقالي مكتوم</option>
-                                <option value="#3a5f7a">🔵 سماوي مكتوم</option>
-                                <option value="#7a6a2e">🟡 أصفر مكتوم</option>
-                                <option value="#7a3a3a">🔴 أحمر مكتوم</option>
-                                <option value="#5a4a7a">🟣 موف مكتوم</option>
+                                <option value="#00ffb3">🟢 أخضر نيون</option>
+                                <option value="#ff6b2b">🟠 برتقالي نيون</option>
+                                <option value="#00b4ff">🔵 أزرق نيون</option>
+                                <option value="#ffe600">🟡 أصفر نيون</option>
+                                <option value="#ff2d55">🔴 أحمر نيون</option>
+                                <option value="#bf5fff">🟣 موف نيون</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
@@ -1312,11 +1319,11 @@
                 const cases = byInit[id];
                 
                 if (init) {
-                    html += `<div style="margin-bottom:32px;border-radius:20px;overflow:hidden;background:${init.color}B3;box-shadow:0 0 24px 4px ${init.color}33, 0 4px 16px rgba(0,0,0,0.15)">
-                        <div class="initiative-header" style="background:${init.color}B3;border-bottom:1px solid rgba(255,255,255,0.15)">
+                    html += `<div style="margin-bottom:32px;border-radius:20px;overflow:hidden;background:${init.color}B3;box-shadow:0 0 16px 2px ${init.color}44, 0 0 4px 1px ${init.color}33">
+                        <div class="initiative-header" style="background:${init.color}B3;border-bottom:1px solid rgba(0,0,0,0.1)">
                             <div>
-                                <div class="initiative-title" style="color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.4)">${init.name}</div>
-                                <div class="initiative-desc" style="color:rgba(255,255,255,0.85)">${init.desc}</div>
+                                <div class="initiative-title init-text">${init.name}</div>
+                                <div class="initiative-desc init-text">${init.desc}</div>
                             </div>
                         </div>
                         <div style="padding:20px;background:transparent">`;
@@ -1772,7 +1779,7 @@
             document.getElementById('initForm').style.display = 'block';
             document.getElementById('initName').value = '';
             document.getElementById('initDesc').value = '';
-            document.getElementById('initColor').value = '#4a7c6f';
+            document.getElementById('initColor').value = '#00ffb3';
             editInitIdx = null;
         }
         
