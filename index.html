@@ -16,7 +16,7 @@
             --border: #E2E8F0;
             --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
             --shadow-hover: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
-            --header-bg: #104e64;
+            --header-bg: #0a0a0a;
             --card-border: #104e64;
             
             --primary: #0e7490;
@@ -813,7 +813,7 @@
         }
         
         .initiative-header {
-            padding: 28px;
+            padding: 24px 28px;
             border-radius: 20px 20px 0 0;
             margin-bottom: 0;
             position: relative;
@@ -822,20 +822,19 @@
         
         .initiative-title {
             font-family: 'Cairo', sans-serif;
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
             position: relative;
             z-index: 1;
         }
         
         .initiative-desc {
-            font-size: 15px;
-            color: rgba(255, 255, 255, 0.95);
+            font-size: 14px;
             line-height: 1.6;
             position: relative;
             z-index: 1;
+            opacity: 0.75;
         }
         
         .empty-state {
@@ -1313,14 +1312,14 @@
                 const cases = byInit[id];
                 
                 if (init) {
-                    html += `<div style="margin-bottom:32px;border:3px solid ${init.color};border-radius:20px;overflow:hidden;box-shadow:0 8px 16px -4px ${init.color}40;background:${init.color}">
-                        <div class="initiative-header" style="background:${init.color};border:none">
+                    html += `<div style="margin-bottom:32px;border-radius:20px;overflow:hidden;background:${init.color}B3;box-shadow:0 0 24px 4px ${init.color}33, 0 4px 16px rgba(0,0,0,0.15)">
+                        <div class="initiative-header" style="background:${init.color}B3;border-bottom:1px solid rgba(255,255,255,0.15)">
                             <div>
-                                <div class="initiative-title">${init.name}</div>
-                                <div class="initiative-desc">${init.desc}</div>
+                                <div class="initiative-title" style="color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.4)">${init.name}</div>
+                                <div class="initiative-desc" style="color:rgba(255,255,255,0.85)">${init.desc}</div>
                             </div>
                         </div>
-                        <div style="padding:20px;background:${init.color}15">`;
+                        <div style="padding:20px;background:transparent">`;
                 } else {
                     html += `<div style="margin-bottom:24px">`;
                 }
