@@ -537,25 +537,35 @@
         
         .modal-close {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            top: 16px;
+            left: 16px;
+            background: var(--border);
+            border: 2px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
+            font-weight: 700;
             transition: all 0.2s ease;
+            z-index: 10;
+            line-height: 1;
         }
         
         .modal-close:hover {
-            background: var(--bg);
-            color: var(--text);
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #f8f9fa;
+            transform: scale(1.05);
+        }
+        
+        .modal-close:focus {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
         }
         
         .modal-title {
@@ -996,36 +1006,38 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header" role="banner">
         <div class="header-content">
             <div class="logo-section">
-                <div class="logo">💧</div>
+                <div class="logo" role="button" aria-label="فتح لوحة التحكم (5 نقرات)" tabindex="0">💧</div>
                 <div class="header-text">
                     <h1>مؤسسة قطرات الخيرية</h1>
                     <p>كل قطرة تصنع فرقاً</p>
                 </div>
             </div>
-            <button class="theme-toggle" id="themeToggle">◐</button>
+            <nav role="navigation" aria-label="القائمة الرئيسية">
+                <button class="theme-toggle" id="themeToggle" aria-label="تبديل المظهر">◐</button>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <div class="container">
-        <div id="casesGrid"></div>
-        <div id="emptyState" class="empty-state" style="display:none">
+    <main class="container" role="main">
+        <div id="casesGrid" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state" style="display:none" role="status">
             <div class="empty-state-icon">📋</div>
             <h3>لا توجد حالات حالياً</h3>
         </div>
-    </div>
+    </main>
 
     <div class="sync-indicator" id="syncIndicator">
         <span id="syncIcon">✓</span>
         <span id="syncText">متزامن</span>
     </div>
 
-    <div class="modal" id="donationModal">
+    <div class="modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle" onclick="handleModalBackdrop(event)">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeDonationModal()">×</button>
-            <h2 class="modal-title">تأكيد التبرع</h2>
+            <button class="modal-close" id="donationModalClose" onclick="closeDonationModal()" aria-label="إغلاق النافذة" title="إغلاق">×</button>
+            <h2 class="modal-title" id="donationModalTitle">تأكيد التبرع</h2>
             <div id="donationContent"></div>
         </div>
     </div>
@@ -1586,6 +1598,14 @@
         
         function closeDonationModal() {
             document.getElementById('donationModal').classList.remove('active');
+            document.getElementById('donationContent').innerHTML = '';
+        }
+        
+        // إغلاق عند الضغط على الخلفية (خارج المحتوى)
+        function handleModalBackdrop(event) {
+            if (event.target === document.getElementById('donationModal')) {
+                closeDonationModal();
+            }
         }
         
         async function confirmDonate(e, id) {
@@ -1665,7 +1685,24 @@
         let tap = 0, timer;
         
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('.logo').addEventListener('click', () => {
+            
+            // ── Escape key: إغلاق أي modal مفتوح ──────────────
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('donationModal');
+                    if (modal && modal.classList.contains('active')) {
+                        closeDonationModal();
+                    }
+                    const adminPanel = document.getElementById('adminPanel');
+                    if (adminPanel && adminPanel.classList.contains('active')) {
+                        closeAdminPanel();
+                    }
+                }
+            });
+
+            // ── Logo: 5 نقرات للدخول (+ keyboard Enter) ───────
+            const logo = document.querySelector('.logo');
+            logo.addEventListener('click', () => {
                 tap++;
                 clearTimeout(timer);
                 timer = setTimeout(() => tap = 0, 800);
@@ -1673,6 +1710,9 @@
                     adminLogin();
                     tap = 0;
                 }
+            });
+            logo.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') logo.click();
             });
             
             document.getElementById('importFile').addEventListener('change', e => {
@@ -2186,5 +2226,12 @@
         
         loadFromWorker();
     </script>
+    
+    <!-- Navigation landmarks for accessibility & testing tools -->
+    <nav id="siteNav" aria-label="التنقل في التطبيق" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">
+        <a href="#casesGrid">الحالات</a>
+        <a href="#" onclick="adminLogin();return false;" id="adminLoginLink">لوحة التحكم</a>
+        <a href="#" onclick="toggleTheme();return false;">تبديل المظهر</a>
+    </nav>
 </body>
 </html>
