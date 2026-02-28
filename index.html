@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-
+<!--
+  © 2025 مؤسسة قطرات الخيرية - جميع الحقوق محفوظة
+  Qatarat Charity Foundation - All Rights Reserved
+  
+  هذا البرنامج محمي بموجب رخصة GPL v3.
+  يُمنع الاستخدام التجاري أو النسخ بدون إذن صريح.
+  
+  Frontend — واجهة المستخدم (النسخة الآمنة)
+  الأجزاء الحساسة منقولة إلى Cloudflare Worker:
+    ✅ كلمة المرور → Worker /auth
+    ✅ Telegram Token → Worker env variables
+    ✅ حفظ البيانات → Worker /data (محمي بـ X-Admin-Key)
+-->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مبادرة صدقات الخيرية</title>
+    <title>مؤسسة قطرات الخيرية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
@@ -12,7 +24,7 @@
         :root {
             --bg: #F8FAFC;
             --surface: #f8f9fa;
-            --text: #0d1117;
+            --text: #161b22;
             --text-secondary: #64748B;
             --border: #E2E8F0;
             --shadow: 0 4px 6px -1px rgba(13, 17, 23, 0.05), 0 2px 4px -2px rgba(13, 17, 23, 0.05);
@@ -579,6 +591,8 @@
             background: var(--bg);
             color: var(--text);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            direction: rtl;
+            text-align: right;
         }
         
         .form-input:focus,
@@ -771,7 +785,8 @@
             font-weight: 700;
             color: var(--text);
             word-break: break-all;
-            text-align: left;
+            text-align: right;
+            direction: rtl;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -986,7 +1001,7 @@
             <div class="logo-section">
                 <div class="logo">💧</div>
                 <div class="header-text">
-                    <h1>مبادرة صدقات الخيرية</h1>
+                    <h1>مؤسسة قطرات الخيرية</h1>
                     <p>كل قطرة تصنع فرقاً</p>
                 </div>
             </div>
@@ -1010,7 +1025,7 @@
     <div class="modal" id="donationModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeDonationModal()">×</button>
-            <h2 class="modal-title">تأكيد التصدق</h2>
+            <h2 class="modal-title">تأكيد التبرع</h2>
             <div id="donationContent"></div>
         </div>
     </div>
@@ -1111,19 +1126,19 @@
                     <form onsubmit="saveBank(event)">
                         <div class="form-group">
                             <label class="form-label">اسم البنك *</label>
-                            <input type="text" class="form-input" id="bankName" required>
+                            <input type="text" class="form-input" id="bankName" required dir="rtl" style="text-align:right">
                         </div>
                         <div class="form-group">
                             <label class="form-label">رقم الحساب *</label>
-                            <input type="text" class="form-input" id="bankAccount" required>
+                            <input type="text" class="form-input" id="bankAccount" required dir="rtl" style="text-align:right">
                         </div>
                         <div class="form-group">
                             <label class="form-label">اسم صاحب الحساب *</label>
-                            <input type="text" class="form-input" id="bankOwner" required>
+                            <input type="text" class="form-input" id="bankOwner" required dir="rtl" style="text-align:right">
                         </div>
                         <div class="form-group">
                             <label class="form-label">IBAN (اختياري)</label>
-                            <input type="text" class="form-input" id="bankIban">
+                            <input type="text" class="form-input" id="bankIban" dir="rtl" style="text-align:right">
                         </div>
                         <button type="submit" class="btn btn-primary">حفظ</button>
                     </form>
@@ -1179,10 +1194,10 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        
+        // ✅ رابط الـ Worker — الأجزاء الحساسة كلها على السيرفر
         const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
 
-        
+        // مفتاح الإدارة — يُحمَّل من Worker بعد تسجيل الدخول الناجح
         let adminKey = sessionStorage.getItem('qatarat_admin_key') || null;
         
         let tg = window.Telegram?.WebApp;
@@ -1191,8 +1206,12 @@
         let data = {
             initiatives: [],
             cases: [],
-            banks: [],
-           
+            banks: [
+                { name: 'بنك الخرطوم', account: '0000000000000000000', owner: 'مبادرة صدقات الخيرية', iban: '' },
+                { name: 'بنك فيصل الاسلامي', account: '0000000000000000000', owner: 'مبادرة صدقات الخيرية', iban: '' },
+                { name: 'بنك التنميه الاسلامي', account: '0000000000000000', owner: 'مبادرة صدقات الخيرية', iban: '' }
+            ],
+            // ❌ كلمة المرور أُزيلت من هنا — أصبحت في Worker env
             currency: 'SDG',
             theme: 'light'
         };
@@ -1297,7 +1316,7 @@
             updateSyncStatus('syncing');
             
             try {
-                
+                // ✅ المفتاح السري في Header — غير مرئي في الكود للزائر
                 const response = await fetch(`${WORKER_API_URL}/data`, {
                     method: 'POST',
                     headers: {
@@ -1439,7 +1458,7 @@
                             <button class="btn btn-primary" onclick="donate(${c.idx})" 
                                     ${closed ? 'disabled' : ''}
                                     style="${init && !closed ? `background-color:${init.color}` : ''}">
-                                ${closed ? '✓ مكتمل' : '❤️ تصدق الآن'}
+                                ${closed ? '✓ مكتمل' : '❤️ تبرع الآن'}
                             </button>
                         </div>
                     </div>`;
@@ -1548,7 +1567,7 @@
                             </div>
                             <div class="preview-images" id="receiptPrev"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary">✅ تأكيد التصدق</button>
+                        <button type="submit" class="btn btn-primary">✅ تأكيد التبرع</button>
                     </form>
                 </div>
             `;
@@ -1573,7 +1592,7 @@
             e.preventDefault();
             const c = data.cases[id];
             const amt = parseFloat(document.getElementById('donateAmount').value);
-            const name = document.getElementById('donorName').value.trim() || 'متصدق كريم';
+            const name = document.getElementById('donorName').value.trim() || 'متبرع كريم';
             
             if (amt <= 0) {
                 notify('مبلغ غير صحيح', 1);
@@ -1605,7 +1624,7 @@
             await saveToWorker();
             renderCases();
             
-            const message = `🎉 <b>تصدق جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
+            const message = `🎉 <b>تبرع جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
             await sendTelegramNotification(message, receipt);
             
             closeDonationModal();
@@ -1682,7 +1701,7 @@
             });
         });
         
-         
+        // ✅ تسجيل الدخول عبر Worker — كلمة المرور لا تُقارن في المتصفح
         async function adminLogin() {
             const p = prompt('كلمة المرور:');
             if (!p) return;
@@ -1696,7 +1715,7 @@
                 const result = await res.json();
                 
                 if (result.success) {
-                  
+                    // حفظ المفتاح في sessionStorage (يُمسح عند إغلاق المتصفح)
                     adminKey = result.key;
                     sessionStorage.setItem('qatarat_admin_key', adminKey);
                     openAdmin();
@@ -1864,7 +1883,7 @@
         
         function delCaseConfirm(idx) {
             const c = data.cases[idx];
-            const msg = `هل تريد حذف الحالة "${c.title}"?\n\n${c.donations && c.donations.length > 0 ? `⚠️ تحتوي على ${c.donations.length} متصدق` : ''}`;
+            const msg = `هل تريد حذف الحالة "${c.title}"?\n\n${c.donations && c.donations.length > 0 ? `⚠️ تحتوي على ${c.donations.length} متبرع` : ''}`;
             if (confirm(msg)) {
                 delCase(idx);
             }
@@ -2099,7 +2118,7 @@
                 initiatives: [],
                 cases: [],
                 banks: [],
-                
+                // ❌ لا كلمة مرور هنا
                 currency: 'SDG',
                 theme: 'light'
             };
@@ -2143,7 +2162,7 @@
                 ta.select();
                 document.execCommand('copy');
                 document.body.removeChild(ta);
-                
+                // تغيير الأيقونة إلى ✓
                 btn.classList.add('copied');
                 btn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
                 setTimeout(() => {
