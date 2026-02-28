@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -771,6 +772,54 @@
             color: var(--text);
             word-break: break-all;
             text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        .copy-icon-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: var(--primary-light);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s, transform 0.15s;
+        }
+        
+        .copy-icon-btn:hover {
+            background: var(--primary);
+        }
+        
+        .copy-icon-btn:hover svg {
+            stroke: #f8f9fa;
+        }
+        
+        .copy-icon-btn:active {
+            transform: scale(0.88);
+        }
+        
+        .copy-icon-btn svg {
+            width: 13px;
+            height: 13px;
+            stroke: var(--primary);
+            fill: none;
+            stroke-width: 2;
+            transition: stroke 0.2s;
+        }
+        
+        .copy-icon-btn.copied {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .copy-icon-btn.copied svg {
+            stroke: #f8f9fa;
         }
         
         .notification {
@@ -1097,7 +1146,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">كلمة المرور</label>
-                        <input type="password" class="form-input" id="adminPass">
+                        <p style="font-size:12px;color:var(--text-secondary);padding:10px;background:var(--border);border-radius:8px;line-height:1.6">
+                            🔒 لتغيير كلمة المرور: اذهب إلى Cloudflare Dashboard ← Workers ← qatarat-api ← Settings ← Variables ← عدّل <strong>ADMIN_PASSWORD</strong>
+                        </p>
                     </div>
                     <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
                 </div>
@@ -1128,7 +1179,11 @@
     <div class="notification" id="notification"></div>
 
     <script>
+        // ✅ رابط الـ Worker — الأجزاء الحساسة كلها على السيرفر
         const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
+
+        // مفتاح الإدارة — يُحمَّل من Worker بعد تسجيل الدخول الناجح
+        let adminKey = sessionStorage.getItem('qatarat_admin_key') || null;
         
         let tg = window.Telegram?.WebApp;
         if(tg) { tg.ready(); tg.expand(); }
@@ -1137,7 +1192,7 @@
             initiatives: [],
             cases: [],
             banks: [],
-            password: 'admin123',
+            // ❌ كلمة المرور أُزيلت من هنا — أصبحت في Worker env
             currency: 'SDG',
             theme: 'light'
         };
@@ -1234,7 +1289,7 @@
                 console.error('localStorage save error:', e);
             }
             
-            if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker')) {
+            if (!WORKER_API_URL || WORKER_API_URL.includes('your-worker') || !adminKey) {
                 return true;
             }
             
@@ -1242,9 +1297,13 @@
             updateSyncStatus('syncing');
             
             try {
+                // ✅ المفتاح السري في Header — غير مرئي في الكود للزائر
                 const response = await fetch(`${WORKER_API_URL}/data`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Key': adminKey
+                    },
                     body: JSON.stringify(data)
                 });
                 
@@ -1429,22 +1488,34 @@
                 <div class="bank-account">
                     <div class="bank-info-item">
                         <span class="bank-info-label">البنك:</span>
-                        <span class="bank-info-value">${b.name}</span>
+                        <span class="bank-info-value"><span id="don-bank-${i}">${b.name}</span></span>
                     </div>
                     <div class="bank-info-item">
                         <span class="bank-info-label">رقم الحساب:</span>
-                        <span class="bank-info-value" style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+                        <span class="bank-info-value">
                             <span id="don-acc-${i}">${b.account}</span>
-                            <button onclick="copyAcc('don-acc-${i}',this)" style="background:var(--primary);color:#f8f9fa;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;flex-shrink:0;transition:all 0.2s">نسخ</button>
+                            <button class="copy-icon-btn" onclick="copyAcc('don-acc-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
                         </span>
                     </div>
                     <div class="bank-info-item">
                         <span class="bank-info-label">صاحب الحساب:</span>
-                        <span class="bank-info-value">${b.owner}</span>
+                        <span class="bank-info-value">
+                            <span id="don-owner-${i}">${b.owner}</span>
+                            <button class="copy-icon-btn" onclick="copyAcc('don-owner-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </span>
                     </div>
                     ${b.iban ? `<div class="bank-info-item">
                         <span class="bank-info-label">IBAN:</span>
-                        <span class="bank-info-value">${b.iban}</span>
+                        <span class="bank-info-value">
+                            <span id="don-iban-${i}">${b.iban}</span>
+                            <button class="copy-icon-btn" onclick="copyAcc('don-iban-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </span>
                     </div>` : ''}
                 </div>
             `).join('') : '<p style="text-align:center;font-size:13px;color:var(--text-secondary)">لا توجد حسابات بنكية</p>';
@@ -1611,12 +1682,29 @@
             });
         });
         
-        function adminLogin() {
+        // ✅ تسجيل الدخول عبر Worker — كلمة المرور لا تُقارن في المتصفح
+        async function adminLogin() {
             const p = prompt('كلمة المرور:');
-            if (p === data.password) {
-                openAdmin();
-            } else if (p !== null) {
-                notify('كلمة مرور خاطئة', 1);
+            if (!p) return;
+            
+            try {
+                const res = await fetch(`${WORKER_API_URL}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: p })
+                });
+                const result = await res.json();
+                
+                if (result.success) {
+                    // حفظ المفتاح في sessionStorage (يُمسح عند إغلاق المتصفح)
+                    adminKey = result.key;
+                    sessionStorage.setItem('qatarat_admin_key', adminKey);
+                    openAdmin();
+                } else {
+                    notify('كلمة مرور خاطئة', 1);
+                }
+            } catch (e) {
+                notify('تعذّر الاتصال بالسيرفر', 1);
             }
         }
         
@@ -1925,22 +2013,39 @@
                 <div class="bank-account">
                     <div class="bank-info-item">
                         <span class="bank-info-label">البنك:</span>
-                        <span class="bank-info-value">${b.name}</span>
+                        <span class="bank-info-value">
+                            <span id="adm-bank-${i}">${b.name}</span>
+                            <button class="copy-icon-btn" onclick="copyAcc('adm-bank-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </span>
                     </div>
                     <div class="bank-info-item">
                         <span class="bank-info-label">رقم الحساب:</span>
-                        <span class="bank-info-value" style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+                        <span class="bank-info-value">
                             <span id="adm-acc-${i}">${b.account}</span>
-                            <button onclick="copyAcc('adm-acc-${i}',this)" style="background:var(--primary);color:#f8f9fa;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;flex-shrink:0;transition:all 0.2s">نسخ</button>
+                            <button class="copy-icon-btn" onclick="copyAcc('adm-acc-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
                         </span>
                     </div>
                     <div class="bank-info-item">
                         <span class="bank-info-label">صاحب الحساب:</span>
-                        <span class="bank-info-value">${b.owner}</span>
+                        <span class="bank-info-value">
+                            <span id="adm-owner-${i}">${b.owner}</span>
+                            <button class="copy-icon-btn" onclick="copyAcc('adm-owner-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </span>
                     </div>
                     ${b.iban ? `<div class="bank-info-item">
                         <span class="bank-info-label">IBAN:</span>
-                        <span class="bank-info-value">${b.iban}</span>
+                        <span class="bank-info-value">
+                            <span id="adm-iban-${i}">${b.iban}</span>
+                            <button class="copy-icon-btn" onclick="copyAcc('adm-iban-${i}',this)">
+                                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </span>
                     </div>` : ''}
                     <button class="btn btn-danger btn-small" onclick="delBank(${i})" style="margin-top:12px">حذف</button>
                 </div>
@@ -1979,12 +2084,8 @@
         }
         
         async function saveSettings() {
-            const p = document.getElementById('adminPass').value;
             const c = document.getElementById('currency').value;
-            
-            if (p && p.length >= 4) data.password = p;
             if (c) data.currency = c;
-            
             await saveToWorker();
             renderCases();
             notify('تم الحفظ', 0);
@@ -1998,7 +2099,7 @@
                 initiatives: [],
                 cases: [],
                 banks: [],
-                password: 'admin123',
+                // ❌ لا كلمة مرور هنا
                 currency: 'SDG',
                 theme: 'light'
             };
@@ -2042,13 +2143,12 @@
                 ta.select();
                 document.execCommand('copy');
                 document.body.removeChild(ta);
-                btn.textContent = '✓ تم';
-                btn.style.background = '#00ffb3';
-                btn.style.color = '#0d1117';
+                // تغيير الأيقونة إلى ✓
+                btn.classList.add('copied');
+                btn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
                 setTimeout(() => {
-                    btn.textContent = 'نسخ';
-                    btn.style.background = 'var(--primary)';
-                    btn.style.color = '#fff';
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
                 }, 2000);
             } catch(e) {
                 alert('تعذّر النسخ، انسخ يدوياً: ' + text);
