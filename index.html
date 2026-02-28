@@ -1,22 +1,10 @@
 <!DOCTYPE html>
-<!--
-  © 2025 مؤسسة قطرات الخيرية - جميع الحقوق محفوظة
-  Qatarat Charity Foundation - All Rights Reserved
-  
-  هذا البرنامج محمي بموجب رخصة GPL v3.
-  يُمنع الاستخدام التجاري أو النسخ بدون إذن صريح.
-  
-  Frontend — واجهة المستخدم (النسخة الآمنة)
-  الأجزاء الحساسة منقولة إلى Cloudflare Worker:
-    ✅ كلمة المرور → Worker /auth
-    ✅ Telegram Token → Worker env variables
-    ✅ حفظ البيانات → Worker /data (محمي بـ X-Admin-Key)
--->
+
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مؤسسة قطرات الخيرية</title>
+    <title>مبادرة صدقات</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
@@ -1011,7 +999,7 @@
             <div class="logo-section">
                 <div class="logo" role="button" aria-label="فتح لوحة التحكم (5 نقرات)" tabindex="0">💧</div>
                 <div class="header-text">
-                    <h1>مؤسسة قطرات الخيرية</h1>
+                    <h1>مبادرات صدقات</h1>
                     <p>كل قطرة تصنع فرقاً</p>
                 </div>
             </div>
@@ -1037,7 +1025,7 @@
     <div class="modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle" onclick="handleModalBackdrop(event)">
         <div class="modal-content">
             <button class="modal-close" id="donationModalClose" onclick="closeDonationModal()" aria-label="إغلاق النافذة" title="إغلاق">×</button>
-            <h2 class="modal-title" id="donationModalTitle">تأكيد التبرع</h2>
+            <h2 class="modal-title" id="donationModalTitle">تأكيد التصدق</h2>
             <div id="donationContent"></div>
         </div>
     </div>
@@ -1206,10 +1194,10 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // ✅ رابط الـ Worker — الأجزاء الحساسة كلها على السيرفر
+         
         const WORKER_API_URL = 'https://qatarat-api.darkleaf354.workers.dev';
 
-        // مفتاح الإدارة — يُحمَّل من Worker بعد تسجيل الدخول الناجح
+        
         let adminKey = sessionStorage.getItem('qatarat_admin_key') || null;
         
         let tg = window.Telegram?.WebApp;
@@ -1223,7 +1211,7 @@
                 { name: 'بنك فيصل الاسلامي', account: '0000000000000000000', owner: 'مبادرة صدقات الخيرية', iban: '' },
                 { name: 'بنك التنميه الاسلامي', account: '0000000000000000', owner: 'مبادرة صدقات الخيرية', iban: '' }
             ],
-            // ❌ كلمة المرور أُزيلت من هنا — أصبحت في Worker env
+           
             currency: 'SDG',
             theme: 'light'
         };
@@ -1328,7 +1316,7 @@
             updateSyncStatus('syncing');
             
             try {
-                // ✅ المفتاح السري في Header — غير مرئي في الكود للزائر
+               
                 const response = await fetch(`${WORKER_API_URL}/data`, {
                     method: 'POST',
                     headers: {
@@ -1470,7 +1458,7 @@
                             <button class="btn btn-primary" onclick="donate(${c.idx})" 
                                     ${closed ? 'disabled' : ''}
                                     style="${init && !closed ? `background-color:${init.color}` : ''}">
-                                ${closed ? '✓ مكتمل' : '❤️ تبرع الآن'}
+                                ${closed ? '✓ مكتمل' : '❤️ تصدق الآن'}
                             </button>
                         </div>
                     </div>`;
@@ -1579,7 +1567,7 @@
                             </div>
                             <div class="preview-images" id="receiptPrev"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary">✅ تأكيد التبرع</button>
+                        <button type="submit" class="btn btn-primary">✅ تأكيد التصدق</button>
                     </form>
                 </div>
             `;
@@ -1601,7 +1589,7 @@
             document.getElementById('donationContent').innerHTML = '';
         }
         
-        // إغلاق عند الضغط على الخلفية (خارج المحتوى)
+        
         function handleModalBackdrop(event) {
             if (event.target === document.getElementById('donationModal')) {
                 closeDonationModal();
@@ -1612,7 +1600,7 @@
             e.preventDefault();
             const c = data.cases[id];
             const amt = parseFloat(document.getElementById('donateAmount').value);
-            const name = document.getElementById('donorName').value.trim() || 'متبرع كريم';
+            const name = document.getElementById('donorName').value.trim() || 'متصدق كريم';
             
             if (amt <= 0) {
                 notify('مبلغ غير صحيح', 1);
@@ -1644,7 +1632,7 @@
             await saveToWorker();
             renderCases();
             
-            const message = `🎉 <b>تبرع جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
+            const message = `🎉 <b>تصدق جديد!</b>\n\n👤 ${name}\n💰 ${fmt(amt)}\n📋 ${data.cases[id].title}\n📅 ${new Date().toLocaleString('ar-EG')}`;
             await sendTelegramNotification(message, receipt);
             
             closeDonationModal();
@@ -1686,7 +1674,7 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             
-            // ── Escape key: إغلاق أي modal مفتوح ──────────────
+           
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     const modal = document.getElementById('donationModal');
@@ -1700,7 +1688,7 @@
                 }
             });
 
-            // ── Logo: 5 نقرات للدخول (+ keyboard Enter) ───────
+           
             const logo = document.querySelector('.logo');
             logo.addEventListener('click', () => {
                 tap++;
@@ -1741,7 +1729,7 @@
             });
         });
         
-        // ✅ تسجيل الدخول عبر Worker — كلمة المرور لا تُقارن في المتصفح
+        
         async function adminLogin() {
             const p = prompt('كلمة المرور:');
             if (!p) return;
@@ -1755,7 +1743,7 @@
                 const result = await res.json();
                 
                 if (result.success) {
-                    // حفظ المفتاح في sessionStorage (يُمسح عند إغلاق المتصفح)
+                    
                     adminKey = result.key;
                     sessionStorage.setItem('qatarat_admin_key', adminKey);
                     openAdmin();
@@ -1917,13 +1905,13 @@
                         <div class="progress-bar" style="width:${pct}%;background-color:${init ? init.color : 'var(--text)'}"></div>
                     </div>
                 </div>
-                ${c.donations && c.donations.length > 0 ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">💚 ${c.donations.length} متبرع</div>` : ''}
+                ${c.donations && c.donations.length > 0 ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">💚 ${c.donations.length} متصدق</div>` : ''}
             </div>`;
         }
         
         function delCaseConfirm(idx) {
             const c = data.cases[idx];
-            const msg = `هل تريد حذف الحالة "${c.title}"?\n\n${c.donations && c.donations.length > 0 ? `⚠️ تحتوي على ${c.donations.length} متبرع` : ''}`;
+            const msg = `هل تريد حذف الحالة "${c.title}"?\n\n${c.donations && c.donations.length > 0 ? `⚠️ تحتوي على ${c.donations.length} متصدق` : ''}`;
             if (confirm(msg)) {
                 delCase(idx);
             }
@@ -2158,7 +2146,7 @@
                 initiatives: [],
                 cases: [],
                 banks: [],
-                // ❌ لا كلمة مرور هنا
+              
                 currency: 'SDG',
                 theme: 'light'
             };
